@@ -1,4 +1,4 @@
-package com.wildlifebackend.wildlife.Exception;
+package com.wildlifebackend.wildlife.exception;
 
 
 import org.springframework.http.ResponseEntity;

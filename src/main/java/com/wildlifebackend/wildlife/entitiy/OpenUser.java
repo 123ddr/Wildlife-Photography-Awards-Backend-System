@@ -1,4 +1,4 @@
-package com.wildlifebackend.wildlife.Model;
+package com.wildlifebackend.wildlife.entitiy;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Table(name = "open_users")
 @Getter
 @Setter
-public class OpenUser {
+public class OpenUser extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,8 @@ public class OpenUser {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Column(columnDefinition = "true")
+    private Boolean isActive;
 
 
 

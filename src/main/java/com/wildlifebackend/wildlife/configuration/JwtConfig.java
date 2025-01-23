@@ -1,4 +1,4 @@
-package com.wildlifebackend.wildlife.Configuration;
+package com.wildlifebackend.wildlife.configuration;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

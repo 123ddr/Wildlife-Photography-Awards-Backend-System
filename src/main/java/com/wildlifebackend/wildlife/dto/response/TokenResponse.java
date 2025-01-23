@@ -1,4 +1,4 @@
-package com.wildlifebackend.wildlife.response;
+package com.wildlifebackend.wildlife.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

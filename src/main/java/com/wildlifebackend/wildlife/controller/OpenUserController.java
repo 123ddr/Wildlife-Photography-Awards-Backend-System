@@ -1,13 +1,14 @@
-package com.wildlifebackend.wildlife.Controller;
+package com.wildlifebackend.wildlife.controller;
 
 
 
-import com.wildlifebackend.wildlife.Configuration.JwtConfig;
-import com.wildlifebackend.wildlife.Model.OpenUser;
-import com.wildlifebackend.wildlife.Service.OpenUserService;
-import com.wildlifebackend.wildlife.response.TokenResponse;
+import com.wildlifebackend.wildlife.configuration.JwtConfig;
+import com.wildlifebackend.wildlife.entitiy.OpenUser;
+import com.wildlifebackend.wildlife.service.OpenUserService;
+import com.wildlifebackend.wildlife.dto.response.TokenResponse;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,12 @@ import java.util.Date;
 @RequestMapping("/api/auth")
 public class OpenUserController {
 
-    private final OpenUserService openuserService;
+    private final OpenUserService openUserService;
     private final JwtConfig jwtConfig;
 
-    public OpenUserController(OpenUserService openuserService, JwtConfig jwtConfig) {
-        this.openuserService = openuserService;
+    @Autowired
+    public OpenUserController( OpenUserService openUserService, JwtConfig jwtConfig) {
+        this.openUserService = openUserService;
         this.jwtConfig = jwtConfig;
     }
 
@@ -31,7 +33,7 @@ public class OpenUserController {
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@Valid @RequestBody OpenUser openuser) {
         try {
-            openuserService.registerUser(openuser);
+            openUserService.registerUser(openuser);
             return ResponseEntity.ok("User registered successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -46,7 +48,7 @@ public class OpenUserController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestParam String email, @RequestParam String password) {
         try {
-            OpenUser loginUser = openuserService.loginUser(email, password);
+            OpenUser loginUser = openUserService.loginUser(email, password);
 
             if (loginUser != null) {
                 // Generate JWT token

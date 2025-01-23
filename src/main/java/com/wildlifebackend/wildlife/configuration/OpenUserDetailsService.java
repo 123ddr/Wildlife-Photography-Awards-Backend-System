@@ -1,8 +1,8 @@
-package com.wildlifebackend.wildlife.Configuration;
+package com.wildlifebackend.wildlife.configuration;
 
 
-import com.wildlifebackend.wildlife.Model.OpenUser;
-import com.wildlifebackend.wildlife.Repository.OpenUserRepository;
+import com.wildlifebackend.wildlife.entitiy.OpenUser;
+import com.wildlifebackend.wildlife.repository.OpenUserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

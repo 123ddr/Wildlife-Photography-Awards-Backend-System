@@ -1,8 +1,9 @@
-package com.wildlifebackend.wildlife.Service;
+package com.wildlifebackend.wildlife.service.serviceImpl;
 
 
-import com.wildlifebackend.wildlife.Model.OpenUser;
-import com.wildlifebackend.wildlife.Repository.OpenUserRepository;
+import com.wildlifebackend.wildlife.entitiy.OpenUser;
+import com.wildlifebackend.wildlife.repository.OpenUserRepository;
+import com.wildlifebackend.wildlife.service.OpenUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,14 +15,15 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class OpenUserService {
+public class OpenUserServiceImpl implements OpenUserService {
+
 
     private final OpenUserRepository openuserRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     // Constructor
-    public OpenUserService(OpenUserRepository openuserRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public OpenUserServiceImpl(OpenUserRepository openuserRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.openuserRepository = openuserRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
