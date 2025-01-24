@@ -40,7 +40,7 @@ public class OpenUser extends BaseEntity {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @Column(columnDefinition = "true")
+    @Column
     private Boolean isActive;
 
 

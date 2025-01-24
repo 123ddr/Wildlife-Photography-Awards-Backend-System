@@ -11,7 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
-@Entity
+
 @Data
 @MappedSuperclass
 @AllArgsConstructor
