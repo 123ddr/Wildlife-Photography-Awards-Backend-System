@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+
 @RestController
 @RequestMapping("/api/auth")
 public class OpenUserController {
@@ -41,42 +42,37 @@ public class OpenUserController {
     }
 
 
-
-
-
-
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestParam String email, @RequestParam String password) {
         try {
             OpenUser loginUser = openUserService.loginUser(email, password);
 
             if (loginUser != null) {
-                // Generate JWT token
                 String token = Jwts.builder()
                         .setSubject(email)
                         .setIssuedAt(new Date())
                         .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
                         .signWith(jwtConfig.getSecretKey())
                         .compact();
-                TokenResponse response = new TokenResponse();
-                response.setToken(token);
-                response.setExpireIn(3600000);
-                response.setStatus(HttpStatus.OK.toString());
+                TokenResponse response = TokenResponse.builder()
+                        .token(token)
+                        .expireIn(3600000)
+                        .build();
 
 
                 return ResponseEntity.ok(response);
             } else {
-                TokenResponse response = new TokenResponse();
-                response.setStatus(String.valueOf(HttpStatus.UNAUTHORIZED));
-                response.setMessage("Invalid email or password");
-
-
+                TokenResponse response = TokenResponse.builder()
+                        .status(String.valueOf(HttpStatus.UNAUTHORIZED))
+                        .message("Invalid email or password")
+                        .build();
                 return ResponseEntity.ok(response);
             }
         } catch (IllegalArgumentException e) {
-            TokenResponse response = new TokenResponse();
-            response.setStatus(String.valueOf(HttpStatus.BAD_REQUEST));
-            response.setMessage(e.getMessage());
+            TokenResponse response = TokenResponse.builder()
+                    .status(String.valueOf(HttpStatus.BAD_REQUEST))
+                    .message(e.getMessage())
+                    .build();
             return ResponseEntity.ok(response);
         }
 
