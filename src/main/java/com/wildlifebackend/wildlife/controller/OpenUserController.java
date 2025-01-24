@@ -3,6 +3,7 @@ package com.wildlifebackend.wildlife.controller;
 
 
 import com.wildlifebackend.wildlife.configuration.JwtConfig;
+import com.wildlifebackend.wildlife.dto.response.APIResponse;
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
 import com.wildlifebackend.wildlife.service.OpenUserService;
 import com.wildlifebackend.wildlife.dto.response.TokenResponse;
@@ -32,12 +33,12 @@ public class OpenUserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@Valid @RequestBody OpenUser openuser) {
+    public ResponseEntity<APIResponse<String>> signUp(@Valid @RequestBody OpenUser openuser) {
         try {
             openUserService.registerUser(openuser);
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok(APIResponse.success("User registered successfully"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.ok(APIResponse.error(e.getMessage()));
         }
     }
 
