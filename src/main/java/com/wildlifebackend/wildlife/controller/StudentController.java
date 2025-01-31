@@ -19,7 +19,7 @@ import java.util.Date;
 
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("api/authz")
 public class StudentController {
 
 
@@ -34,7 +34,7 @@ public class StudentController {
 
 
 
-    @PostMapping("/signup")
+    @PostMapping("/signup_student")
     public ResponseEntity<APIResponse<String>> signUp(@Valid @RequestBody Student student) {
         try {
             studentService.registerStudent(student);
@@ -45,7 +45,7 @@ public class StudentController {
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/login_student")
     public ResponseEntity<TokenResponse> login(@RequestParam String email, @RequestParam String password) {
         try {
             Student loginStudent = studentService.loginStudent(email, password);

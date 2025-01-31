@@ -24,8 +24,11 @@ public class SecurityConfig {
 
     private final OpenUserDetailsService openUserDetailsService;
 
-    public SecurityConfig(OpenUserDetailsService openUserDetailsService) {
+    private final StudentDetailsService studentDetailsService;
+
+    public SecurityConfig(OpenUserDetailsService openUserDetailsService, StudentDetailsService studentDetailsService) {
         this.openUserDetailsService = openUserDetailsService;
+        this.studentDetailsService = studentDetailsService;
     }
 
     @Bean
@@ -36,7 +39,7 @@ public class SecurityConfig {
 
                 // Configure endpoint-based authorization
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login").permitAll() // Public endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login", "/api/authz/signup_student", "/api/authz/login_student").permitAll() // Public endpoints
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
 
@@ -66,6 +69,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(openUserDetailsService); // Custom user details service
+        authProvider.setUserDetailsService(studentDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
