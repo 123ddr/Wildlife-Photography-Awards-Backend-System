@@ -39,7 +39,13 @@ public class SecurityConfig {
 
                 // Configure endpoint-based authorization
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login", "/api/authz/signup_student", "/api/authz/login_student").permitAll() // Public endpoints
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/auth/signup",
+                                "/api/auth/login",
+                                "/api/authz/signup_student",
+                                "/api/authz/login_student",
+                                "/submissions/create",
+                                "/api/submissions/create").permitAll() // Public endpoints
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
 
