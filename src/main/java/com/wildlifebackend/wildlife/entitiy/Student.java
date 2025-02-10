@@ -15,7 +15,7 @@ import java.time.Period;
 @Setter
 @Getter
 @Table(name = "students")
-public class Student {
+public class Student extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +38,5 @@ public class Student {
     @NotBlank(message = "Password is required")
     private String password;
 
-
 }
+
