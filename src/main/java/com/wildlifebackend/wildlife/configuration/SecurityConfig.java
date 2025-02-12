@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
                                 "/submissions/create",
-                                "/api/submissions/create").permitAll() // Public endpoints
+                                "/api/submissions/create",
+                                "/auth/forgotpass").permitAll() // Public endpoints
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
 
