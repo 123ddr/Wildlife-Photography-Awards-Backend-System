@@ -2,24 +2,30 @@ package com.wildlifebackend.wildlife.configuration;
 
 
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
 
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
 public class SecurityConfig {
+
 
 
     private final OpenUserDetailsService openUserDetailsService;
@@ -34,30 +40,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF for APIs (enable it with token-based CSRF protection in production)
-                .csrf(csrf -> csrf.disable())
-
-                // Configure endpoint-based authorization
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(
                                 "/api/auth/signup",
                                 "/api/auth/login",
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
                                 "/submissions/create",
                                 "/api/submissions/create",
-                                "/auth/forgotpass").permitAll() // Public endpoints
-                        .anyRequest().authenticated() // Protect all other endpoints
+                                "/auth/forgotpass"
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
 
-                // Disable form login as it's unnecessary for stateless APIs
-                .formLogin(formLogin -> formLogin.disable());
+//                // Disable form login as it's unnecessary for stateless APIs
+//                .formLogin(formLogin -> formLogin.disable());
+//
+//                // Enable basic authentication (can replace with JWT for better security)
+//                .http.httpBasic(httpBasic -> httpBasic.disable());
 
-                // Enable basic authentication (can replace with JWT for better security)
-//                .httpBasic(httpBasic -> httpBasic.enable());
+                .httpBasic(withDefaults());
 
         return http.build();
     }
+
+
 
 
     @Bean

@@ -1,7 +1,7 @@
 package com.wildlifebackend.wildlife.service;
 
 
-import lombok.Setter;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
