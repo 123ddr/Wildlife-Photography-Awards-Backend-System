@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/api/authz/login_student",
                                 "/submissions/create",
                                 "/api/submissions/create",
-                                "/auth/forgotpass"
+                                "/auth/forgotpass",
+                                "/api/photos/**"
                         )
                         .permitAll()
                         .anyRequest()
