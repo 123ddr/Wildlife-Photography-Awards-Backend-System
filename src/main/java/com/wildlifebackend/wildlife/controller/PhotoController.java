@@ -1,6 +1,7 @@
 package com.wildlifebackend.wildlife.controller;
 
 
+import com.wildlifebackend.wildlife.dto.response.PhotoDTO;
 import com.wildlifebackend.wildlife.entitiy.Photo;
 import com.wildlifebackend.wildlife.service.PhotoService;
 import org.springframework.http.HttpStatus;
@@ -24,23 +25,15 @@ public class PhotoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Photo>> getAllPhotos() {
-        try {
-            List<Photo> photos = photoService.getAllPhotos();
-            return ResponseEntity.ok(photos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<List<PhotoDTO>> getAllPhotos() {
+        return ResponseEntity.ok(photoService.getAllPhotos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Photo> getPhotoById(@PathVariable Long id) {
-        try {
-            Optional<Photo> photo = photoService.getPhotoById(id);
-            return photo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<PhotoDTO> getPhotoById(@PathVariable Long id) {
+        return photoService.getPhotoById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping
@@ -53,11 +46,10 @@ public class PhotoController {
             }
 
             Photo savedPhoto = photoService.savePhoto(file, title, description);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPhoto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new PhotoDTO(savedPhoto.getPhotoId(), savedPhoto.getTitle(), savedPhoto.getDescription()));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving photo: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
         }
     }
 
@@ -67,14 +59,12 @@ public class PhotoController {
                                          @RequestParam("title") String title,
                                          @RequestParam("description") String description) {
         try {
-            Photo updatedPhoto = photoService.updatePhoto(id, file, title, description);
+            PhotoDTO updatedPhoto = photoService.updatePhoto(id, file, title, description);
             return ResponseEntity.ok(updatedPhoto);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating photo: " + e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Photo not found");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
         }
     }
 
@@ -85,8 +75,6 @@ public class PhotoController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Photo not found");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
         }
     }
 }
