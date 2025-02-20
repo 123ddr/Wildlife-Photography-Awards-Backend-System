@@ -21,6 +21,7 @@ public class OpenSubmissionDTO {
     private LocalDate dateOfPhotograph;
     @NotBlank
     private String technicalInfo;
+
     private MultipartFile rawFile;
     private String entryDescription;
 }
