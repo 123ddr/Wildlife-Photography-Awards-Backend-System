@@ -1,9 +1,9 @@
 package com.wildlifebackend.wildlife.configuration;
 
 
-import com.wildlifebackend.wildlife.entitiy.OpenUser;
+
 import com.wildlifebackend.wildlife.entitiy.Student;
-import com.wildlifebackend.wildlife.repository.OpenUserRepository;
+
 import com.wildlifebackend.wildlife.repository.StudentRepositary;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

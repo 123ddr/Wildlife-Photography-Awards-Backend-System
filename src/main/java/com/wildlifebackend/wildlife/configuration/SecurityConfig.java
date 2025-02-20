@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,7 +26,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
 
-
     private final OpenUserDetailsService openUserDetailsService;
 
     private final StudentDetailsService studentDetailsService;
@@ -40,9 +38,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(
+                // Disable CSRF for APIs (enable it with token-based CSRF protection in production)
+                .csrf(csrf -> csrf.disable())
+
+                // Configure endpoint-based authorization
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST,
                                 "/api/auth/signup",
                                 "/api/auth/login",
                                 "/api/authz/signup_student",
@@ -51,24 +52,18 @@ public class SecurityConfig {
                                 "/api/submissions/create",
                                 "/auth/forgotpass",
                                 "/api/photos/**"
-                        )
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                                                ).permitAll() // Public endpoints
+                        .anyRequest().authenticated() // Protect all other endpoints
                 )
 
-//                // Disable form login as it's unnecessary for stateless APIs
-//                .formLogin(formLogin -> formLogin.disable());
-//
-//                // Enable basic authentication (can replace with JWT for better security)
-//                .http.httpBasic(httpBasic -> httpBasic.disable());
+                // Disable form login as it's unnecessary for stateless APIs
+                .formLogin(formLogin -> formLogin.disable());
 
-                .httpBasic(withDefaults());
+        // Enable basic authentication (can replace with JWT for better security)
+//                .httpBasic(httpBasic -> httpBasic.enable());
 
         return http.build();
     }
-
-
 
 
     @Bean
@@ -82,6 +77,7 @@ public class SecurityConfig {
                 .authenticationProvider(daoAuthenticationProvider())
                 .build();
     }
+
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
