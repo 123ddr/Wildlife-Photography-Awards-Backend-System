@@ -8,6 +8,7 @@ import com.wildlifebackend.wildlife.entitiy.Student;
 import com.wildlifebackend.wildlife.repository.StudentRepositary;
 import com.wildlifebackend.wildlife.service.OpenUserService;
 import com.wildlifebackend.wildlife.service.StudentService;
+import com.wildlifebackend.wildlife.service.serviceImpl.StudentServiceImpl;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,11 @@ import java.util.Date;
 public class StudentController {
 
 
-    private final StudentService studentService;
+    private final StudentServiceImpl studentService;
     private final JwtConfig jwtConfig;
 
     @Autowired
-    public StudentController(StudentService studentService, JwtConfig jwtConfig) {
+    public StudentController(StudentServiceImpl studentService, JwtConfig jwtConfig) {
         this.studentService = studentService;
         this.jwtConfig = jwtConfig;
     }
