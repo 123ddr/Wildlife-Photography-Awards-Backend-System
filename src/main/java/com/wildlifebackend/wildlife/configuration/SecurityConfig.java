@@ -1,13 +1,8 @@
 package com.wildlifebackend.wildlife.configuration;
 
-
-
 import com.wildlifebackend.wildlife.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-
-
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
