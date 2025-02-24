@@ -4,6 +4,7 @@ package com.wildlifebackend.wildlife.service;
 import com.wildlifebackend.wildlife.dto.response.PhotoDTO;
 import com.wildlifebackend.wildlife.entitiy.Photo;
 import com.wildlifebackend.wildlife.repository.PhotoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,10 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class PhotoService {
 
-    private final PhotoRepository photoRepository;
+    @Autowired
+    private PhotoRepository photoRepository;
 
-    public PhotoService(PhotoRepository photoRepository) {
-        this.photoRepository = photoRepository;
+    public List<Photo> getPhotosByUser(Long userId) {
+        return photoRepository.findByOwnerId(userId);
     }
 
     public List<PhotoDTO> getAllPhotos() {
