@@ -4,6 +4,7 @@ package com.wildlifebackend.wildlife.controller;
 import com.wildlifebackend.wildlife.dto.response.PhotoDTO;
 import com.wildlifebackend.wildlife.entitiy.Photo;
 import com.wildlifebackend.wildlife.service.PhotoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,19 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class PhotoController {
 
-    private final PhotoService photoService;
+    @Autowired
+    private PhotoService photoService;
 
-    public PhotoController(PhotoService photoService) {
-        this.photoService = photoService;
+
+
+//    allow you to retrieve all photos of a user by calling
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Photo>> getPhotosByUser(@PathVariable Long userId) {
+        List<Photo> photos = photoService.getPhotosByUser(userId);
+        return ResponseEntity.ok(photos);
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<PhotoDTO>> getAllPhotos() {

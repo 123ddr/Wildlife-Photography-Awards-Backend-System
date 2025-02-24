@@ -17,6 +17,10 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoId;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private OpenUser openUser;
+
     @Lob
     @Column(nullable = false)
     private byte[] rawFile;  // Store image as byte array
