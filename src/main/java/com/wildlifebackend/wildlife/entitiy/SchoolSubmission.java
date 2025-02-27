@@ -2,17 +2,17 @@ package com.wildlifebackend.wildlife.entitiy;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Submission")
 @Getter
 @Setter
-public class SubmissionSchool {
+public class SchoolSubmission {
 
 
     @Id
@@ -21,11 +21,15 @@ public class SubmissionSchool {
     private String StudentName;
     private Date dateOfBirth;
     private String contactNo;
-    private String entryCategories;
+
+    @ElementCollection
+    @CollectionTable(name = "entry categories", joinColumns=@JoinColumn(name = "SubmissionId"))
+    @Column(name = "category")
+    private Set<String> entryCategories;
     private String entryTitle;
     private Date dateOfPhotograph;
     private String technicalInformation;
-    private String rawFile;
+    private String rawFilePath;
     private String EntryDescription;
     private String entryUploadPath;
 

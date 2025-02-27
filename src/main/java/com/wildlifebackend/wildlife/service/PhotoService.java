@@ -20,7 +20,7 @@ public class PhotoService {
     private PhotoRepository photoRepository;
 
     public List<Photo> getPhotosByUser(Long userId) {
-        return photoRepository.findByOwnerId(userId);
+        return photoRepository.findByOpenUserId(userId);
     }
 
     public List<PhotoDTO> getAllPhotos() {

@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
-    List<Photo> findByOwnerId(Long userId);
+    List<Photo> findByOpenUserId(Long userId);
 
 }
