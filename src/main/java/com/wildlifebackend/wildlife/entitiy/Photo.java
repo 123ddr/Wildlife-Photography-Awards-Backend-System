@@ -17,9 +17,10 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private OpenUser openUser;
+
 
     @Lob
     @Column(nullable = false)
@@ -28,4 +29,9 @@ public class Photo {
     private String description;
 
     private String title;
+
+
+////    Storing large images in a database may slow performance. Instead, save them in a file storage (AWS S3, local file system) and store only the file path in the database
+//    private String filePath;
+
 }

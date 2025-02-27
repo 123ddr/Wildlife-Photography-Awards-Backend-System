@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
                                 "/api/open_submissions/create",
-                                "/api/submissions/create",
+                                "/api/schoolsubmission/createSchoolSubmission",
                                 "/auth/forgotpass",
                                 "/api/photos/**"
                                                 ).permitAll()
