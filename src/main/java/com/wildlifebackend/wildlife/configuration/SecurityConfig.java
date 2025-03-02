@@ -52,10 +52,15 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
+
+                                "/submissions/create",
+                                "/schoolsubmission/createSchoolSubmission",
+                                "/api/photos/**",
+
                                 "/api/open_submissions/create",
                                 "/api/schoolsubmission/createSchoolSubmission",
                                 "/auth/forgotpass",
-                                "/api/photos/**"
+                                "/api/studentphotosphotos/**"
                                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

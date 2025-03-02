@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.Period;
 
 
 @Entity
@@ -38,5 +37,9 @@ public class Student extends BaseEntity {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role=Role.STUDENT;
+
 }
+
 
