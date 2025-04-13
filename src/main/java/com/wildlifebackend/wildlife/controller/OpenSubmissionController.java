@@ -4,6 +4,7 @@ package com.wildlifebackend.wildlife.controller;
 import com.wildlifebackend.wildlife.dto.response.OpenSubmissionDTO;
 import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.service.OpenSubmissionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/open_submissions")
 public class OpenSubmissionController {
 
-    private final OpenSubmissionService openservice;
+    @Autowired
+    private OpenSubmissionService openservice;
 
-    public OpenSubmissionController(OpenSubmissionService openservice) {
-        this.openservice = openservice;
-    }
+
 
     @PostMapping("/create")
     public ResponseEntity<OpenSubmission> submitEntry(@ModelAttribute OpenSubmissionDTO dto) {

@@ -48,14 +48,14 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,
-                                "/api/auth/signup",
-                                "/api/auth/login",
+                                "/api/auth/**",
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
 
                                 "/submissions/create",
                                 "/schoolsubmission/createSchoolSubmission",
                                 "/api/photos/**",
+                                "/api/openphotos/**",
 
                                 "/api/open_submissions/create",
                                 "/api/schoolsubmission/createSchoolSubmission",

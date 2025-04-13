@@ -2,9 +2,7 @@ package com.wildlifebackend.wildlife.service.serviceImpl;
 
 
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
-import com.wildlifebackend.wildlife.entitiy.Photo;
 import com.wildlifebackend.wildlife.repository.OpenUserRepository;
-import com.wildlifebackend.wildlife.repository.PhotoRepository;
 import com.wildlifebackend.wildlife.service.OpenUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service
@@ -74,5 +70,9 @@ public class OpenUserServiceImpl implements OpenUserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return openuser;
+    }
+
+    public OpenUser getAuthenticatedUser(org.apache.tomcat.util.net.openssl.ciphers.Authentication authentication) {
+        return null;
     }
 }

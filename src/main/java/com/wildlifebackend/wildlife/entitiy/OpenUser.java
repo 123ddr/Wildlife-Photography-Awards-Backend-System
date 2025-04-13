@@ -21,8 +21,8 @@ public class OpenUser extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "openUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Photo> photos = new ArrayList<>();
+//    @OneToMany(mappedBy = "openUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<Photo> photos = new ArrayList<>();
 
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -47,7 +47,5 @@ public class OpenUser extends BaseEntity {
 
     @Column
     private Boolean isActive;
-
-
 
 }

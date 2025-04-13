@@ -6,6 +6,7 @@ import com.wildlifebackend.wildlife.entitiy.StudentPhoto;
 import com.wildlifebackend.wildlife.service.StudentPhotoService;
 import com.wildlifebackend.wildlife.service.serviceImpl.StudentServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,12 +20,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/studentphotos")
 @RequiredArgsConstructor
-
 public class StudentPhotoController {
 
-    private final StudentPhotoService studentPhotoService;
-    private final StudentServiceImpl studentService;
-    private final StudentServiceImpl studentServiceImpl;
+    @Autowired
+    private StudentPhotoService studentPhotoService;
+
+    @Autowired
+    private StudentServiceImpl studentServiceImpl;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('STUDENT')")
