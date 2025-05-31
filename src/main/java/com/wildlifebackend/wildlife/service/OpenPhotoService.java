@@ -23,19 +23,22 @@ public class OpenPhotoService {
     private OpenUserRepository openuserRepositary;
 
 
-    public OpenPhoto uploadPhoto(Long openuserId, MultipartFile file, String title, String description) throws IOException {
+    public OpenPhoto uploadPhoto(Long openUserId, MultipartFile file, String title, String description) throws IOException {
 
-        OpenUser openuser=openuserRepositary.findById(openuserId)
-                .orElseThrow(()->new ResourceNotFoundException("Student not found"));
+        // Validate and fetch the user
+        OpenUser openUser = openuserRepositary.findById(openUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + openUserId));
 
-        OpenPhoto openPhoto=new OpenPhoto();
+        // Prepare and populate OpenPhoto entity
+        OpenPhoto openPhoto = new OpenPhoto();
         openPhoto.setTitle(title);
         openPhoto.setDescription(description);
         openPhoto.setFileData(file.getBytes());
-        openPhoto.setOpenuser(openuser);
+        openPhoto.setOpenUser(openUser);
 
         return openPhotoRepo.save(openPhoto);
     }
+
 
     public OpenPhoto getPhotoById(Long photoId){
         return openPhotoRepo.findById(photoId)

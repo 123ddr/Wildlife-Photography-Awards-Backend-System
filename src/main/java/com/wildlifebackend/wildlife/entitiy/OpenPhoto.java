@@ -25,7 +25,7 @@ public class OpenPhoto {
     @Lob
     private byte[] fileData;
 
-    @ManyToOne
-    @JoinColumn(name="open_id")
-    private OpenUser openuser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private OpenUser openUser;
 }

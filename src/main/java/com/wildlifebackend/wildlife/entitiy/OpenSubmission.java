@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,8 +23,13 @@ public class OpenSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private Long photographerId;
+    @ManyToMany
+    @JoinTable(
+            name = "user_submissions",
+            joinColumns = @JoinColumn(name = "submission_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<OpenUser> photographers = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "entry_categories", joinColumns = @JoinColumn(name = "submission_id"))

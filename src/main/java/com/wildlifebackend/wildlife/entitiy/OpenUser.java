@@ -9,7 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "open_users")
@@ -21,8 +23,8 @@ public class OpenUser extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToMany(mappedBy = "openUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private List<Photo> photos = new ArrayList<>();
+    @OneToMany(mappedBy = "openUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OpenPhoto> photos = new ArrayList<>();
 
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -47,5 +49,8 @@ public class OpenUser extends BaseEntity {
 
     @Column
     private Boolean isActive;
+
+    @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private Set<OpenSubmission> submissions = new HashSet<>();
 
 }

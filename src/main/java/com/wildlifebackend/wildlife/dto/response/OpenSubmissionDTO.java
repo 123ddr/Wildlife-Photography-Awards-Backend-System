@@ -2,7 +2,9 @@ package com.wildlifebackend.wildlife.dto.response;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jdk.jshell.Snippet;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,8 +14,9 @@ import java.util.Set;
 @Data
 public class OpenSubmissionDTO {
 
-    @NotNull
-    private Long photographerId;
+    @NotEmpty(message = "At least one photographer ID is required")
+    private Set<Long> photographerIds;
+
     private Set<String> entryCategories;
     @NotBlank
     private String entryTitle;
@@ -24,4 +27,5 @@ public class OpenSubmissionDTO {
 
     private MultipartFile rawFile;
     private String entryDescription;
+
 }
