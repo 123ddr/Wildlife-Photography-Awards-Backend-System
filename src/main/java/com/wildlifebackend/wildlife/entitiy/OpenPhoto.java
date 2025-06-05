@@ -16,7 +16,7 @@ public class OpenPhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoId;
 
-    private Long openUserId;
+//    private Long openUserId;
 
     private String title;
     private String description;
@@ -26,6 +26,7 @@ public class OpenPhoto {
     private byte[] fileData;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "open_user_id", nullable = false) // FK column
     private OpenUser openUser;
+
 }

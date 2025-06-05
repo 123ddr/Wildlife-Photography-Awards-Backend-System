@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/open_submissions")
+@Validated
 public class OpenSubmissionController {
 
     private final OpenSubmissionService openSubmissionService;
@@ -33,13 +35,12 @@ public class OpenSubmissionController {
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         try {
-            // Attach file to DTO
-            submissionDTO.setRawFile(file);
+            if (file != null && !file.isEmpty()) {
+                submissionDTO.setRawFile(file);
+            }
 
-            // Save the submission
             OpenSubmission savedSubmission = openSubmissionService.saveSubmission(submissionDTO);
 
-            // Return created submission
             return ResponseEntity.status(HttpStatus.CREATED).body(savedSubmission);
 
         } catch (Exception e) {

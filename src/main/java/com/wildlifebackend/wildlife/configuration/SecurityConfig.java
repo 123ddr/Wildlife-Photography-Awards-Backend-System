@@ -47,6 +47,7 @@ public class SecurityConfig {
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/**",
                                 "/api/authz/signup_student",
@@ -57,7 +58,7 @@ public class SecurityConfig {
                                 "/api/photos/**",
                                 "/api/openphotos/**",
 
-                                "/api/open_submissions/create",
+                                "/api/open_submissions",
                                 "/api/schoolsubmission/createSchoolSubmission",
                                 "/auth/forgotpass",
                                 "/api/studentphotosphotos/**"

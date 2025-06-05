@@ -52,5 +52,6 @@ public class OpenUser extends BaseEntity {
 
     @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Set<OpenSubmission> submissions = new HashSet<>();
+    //OpenUser: Represents a user or photographer.
 
 }

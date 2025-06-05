@@ -30,6 +30,7 @@ public class OpenSubmission {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<OpenUser> photographers = new HashSet<>();
+    //OpenSubmission: Represents a photo submission entry.
 
     @ElementCollection
     @CollectionTable(name = "entry_categories", joinColumns = @JoinColumn(name = "submission_id"))

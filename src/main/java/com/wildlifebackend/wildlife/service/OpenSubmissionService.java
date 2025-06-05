@@ -51,32 +51,38 @@ public class OpenSubmissionService {
         submission.setEntryDescription(dto.getEntryDescription());
         submission.setEntryCategories(dto.getEntryCategories());
 
-        // Set photographers
+        // Fetch photographers by IDs
         Set<OpenUser> photographers = new HashSet<>(openUserRepository.findAllById(dto.getPhotographerIds()));
         if (photographers.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No valid photographers found for given IDs");
         }
         submission.setPhotographers(photographers);
 
-        // Maintain bidirectional relationship
+        // Maintain bidirectional relationship properly:
+        // Clear existing submissions in photographers to avoid duplication if reused
         for (OpenUser photographer : photographers) {
             photographer.getSubmissions().add(submission);
         }
 
         // Handle raw file upload
-        MultipartFile rawFile = dto.getRawFile();
-        if (rawFile != null && !rawFile.isEmpty()) {
-            try {
-                String uniqueFilename = UUID.randomUUID() + "_" + Objects.requireNonNull(rawFile.getOriginalFilename());
-                Path targetLocation = uploadDir.resolve(uniqueFilename);
-                Files.copy(rawFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-                submission.setRawFilePath(targetLocation.toString());
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload raw file", e);
-            }
+        if (dto.getRawFile() != null && !dto.getRawFile().isEmpty()) {
+            String rawFilePath = storeFile(dto.getRawFile());
+            submission.setRawFilePath(rawFilePath);
         }
 
         return openSubmissionRepository.save(submission);
+    }
+
+    private String storeFile(MultipartFile file) {
+        String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+        String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+        Path targetLocation = uploadDir.resolve(uniqueFilename);
+        try {
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            return targetLocation.toString();
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload raw file", e);
+        }
     }
 
     private void validateDTO(OpenSubmissionDTO dto) {
