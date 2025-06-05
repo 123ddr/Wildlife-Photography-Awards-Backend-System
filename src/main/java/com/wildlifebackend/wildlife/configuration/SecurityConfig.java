@@ -2,6 +2,7 @@ package com.wildlifebackend.wildlife.configuration;
 
 
 
+import com.wildlifebackend.wildlife.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,45 +14,65 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
 
-    private final OpenUserDetailsService openUserDetailsService;
 
+    private final OpenUserDetailsService openUserDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final StudentDetailsService studentDetailsService;
 
-    public SecurityConfig(OpenUserDetailsService openUserDetailsService, StudentDetailsService studentDetailsService) {
+    public SecurityConfig(OpenUserDetailsService openUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, StudentDetailsService studentDetailsService) {
         this.openUserDetailsService = openUserDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.studentDetailsService = studentDetailsService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF for APIs (enable it with token-based CSRF protection in production)
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
 
-                // Configure endpoint-based authorization
+//        To ensure CSRF is completely disabled for API requests, explicitly exclude it for all endpoints:
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login", "/api/authz/signup_student", "/api/authz/login_student").permitAll() // Public endpoints
-                        .anyRequest().authenticated() // Protect all other endpoints
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/auth/**",
+                                "/api/authz/signup_student",
+                                "/api/authz/login_student",
+
+                                "/submissions/create",
+                                "/schoolsubmission/createSchoolSubmission",
+                                "/api/photos/**",
+                                "/api/openphotos/**",
+
+                                "/api/open_submissions",
+                                "/api/schoolsubmission/createSchoolSubmission",
+                                "/auth/forgotpass",
+                                "/api/studentphotosphotos/**"
+                                                ).permitAll()
+                        .anyRequest().authenticated()
                 )
 
-                // Disable form login as it's unnecessary for stateless APIs
-                .formLogin(formLogin -> formLogin.disable());
+                // Properly add JwtAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // Enable basic authentication (can replace with JWT for better security)
-//                .httpBasic(httpBasic -> httpBasic.enable());
+                .formLogin(formLogin -> formLogin.disable()); // Disable form login
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,16 +82,27 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(daoAuthenticationProvider())
+                .authenticationProvider(openAuthProvider())
+                .authenticationProvider(studentAuthProvider() )
                 .build();
     }
 
+
+
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
+    public DaoAuthenticationProvider openAuthProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(openUserDetailsService); // Custom user details service
+        authProvider.setUserDetailsService(openUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider studentAuthProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(studentDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
 }

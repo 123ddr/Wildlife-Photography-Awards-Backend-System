@@ -8,14 +8,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.Period;
 
 
 @Entity
 @Setter
 @Getter
 @Table(name = "students")
-public class Student {
+public class Student extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +37,9 @@ public class Student {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role=Role.STUDENT;
 
 }
+
+

@@ -7,6 +7,7 @@ import com.wildlifebackend.wildlife.dto.response.APIResponse;
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
 import com.wildlifebackend.wildlife.service.OpenUserService;
 import com.wildlifebackend.wildlife.dto.response.TokenResponse;
+import com.wildlifebackend.wildlife.service.serviceImpl.OpenUserServiceImpl;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
 public class OpenUserController {
 
     private final OpenUserService openUserService;
