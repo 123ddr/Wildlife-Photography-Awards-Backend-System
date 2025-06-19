@@ -27,29 +27,33 @@ public class OpenPhotoService {
 
     public OpenPhoto uploadPhoto(Long openUserId, MultipartFile file, String title, String description) throws IOException {
 
-        // Validate and fetch the user
+        // 1. Fetch user, throw exception if not found
         OpenUser openUser = openuserRepositary.findById(openUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + openUserId));
 
+        // 2. Validate file is not empty
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
 
+        // 3. Validate file is an image
         if (!file.getContentType().startsWith("image/")) {
             throw new IllegalArgumentException("Only image files are allowed");
         }
 
-        // Prepare and populate OpenPhoto entity
+        // 4. Create OpenPhoto entity and set properties
         OpenPhoto openPhoto = new OpenPhoto();
         openPhoto.setTitle(title);
         openPhoto.setDescription(description);
-        openPhoto.setUploadDateTime(LocalDate.now()); // Important!
+        openPhoto.setUploadDateTime(LocalDate.now());
         openPhoto.setFileData(file.getBytes());
+
+        // 5. Associate the OpenPhoto with the fetched OpenUser
         openPhoto.setOpenUser(openUser);
 
+        // 6. Save and return the entity
         return openPhotoRepo.save(openPhoto);
     }
-
 
     public OpenPhoto getPhotoById(Long photoId) {
         if (photoId == null || photoId <= 0) {

@@ -1,6 +1,7 @@
 package com.wildlifebackend.wildlife.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -18,14 +19,19 @@ public class OpenSubmissionDTO {
     private Set<Long> photographerIds;
 
     private Set<String> entryCategories;
-    @NotBlank
+
+    @NotBlank(message = "Entry title is required")
     private String entryTitle;
-    @NotNull
+
+    @NotNull(message = "Date of photograph is required")
     private LocalDate dateOfPhotograph;
-    @NotBlank
+
+    @NotBlank(message = "Technical info is required")
     private String technicalInfo;
 
+    @JsonIgnore
     private MultipartFile rawFile;
+
     private String entryDescription;
 
 }

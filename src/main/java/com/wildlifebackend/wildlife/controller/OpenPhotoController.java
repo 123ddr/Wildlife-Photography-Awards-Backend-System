@@ -32,32 +32,40 @@ public class OpenPhotoController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('OPENUSER')")
-    public ResponseEntity<?> uploadPhoto(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("title") String title,
-                                         @RequestParam("description") String description,
-                                         Authentication authentication) {
+    public ResponseEntity<?> uploadPhoto(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            Authentication authentication) {
         try {
-            // Get the authenticated user
+            // Get the authenticated user safely
             OpenUser openUser = openUserService.getAuthenticatedUser(authentication);
+            if (openUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "User not authenticated"));
+            }
 
-            // Upload the photo
+            // Call service to upload photo
             OpenPhoto savedPhoto = openPhotoService.uploadPhoto(openUser.getId(), file, title, description);
 
-            // Return the saved photo details
+            // Return created photo details
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPhoto);
 
         } catch (IllegalArgumentException e) {
-            // Handle validation issues like empty file or non-image
+            // Bad request, validation errors like empty file or invalid file type
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
 
         } catch (ResourceNotFoundException e) {
+            // User not found or other resource missing
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
 
         } catch (IOException e) {
+            // File processing errors
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to process uploaded file", "details", e.getMessage()));
 
         } catch (Exception e) {
+            // Catch-all for unexpected exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Unexpected error occurred", "details", e.getMessage()));
         }
