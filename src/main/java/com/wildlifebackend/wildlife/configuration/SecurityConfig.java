@@ -63,6 +63,12 @@ public class SecurityConfig {
                                 "/auth/forgotpass",
                                 "/api/studentphotosphotos/**"
                                                 ).permitAll()
+
+                        // Role-based access control
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/open/**").hasAnyRole("OPENUSER", "ADMIN", "STUDENT")
+
                         .anyRequest().authenticated()
                 )
 

@@ -1,6 +1,7 @@
 package com.wildlifebackend.wildlife.entitiy;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ public class OpenSubmission {
             joinColumns = @JoinColumn(name = "submission_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonIgnore
     private Set<OpenUser> photographers = new HashSet<>();
     //OpenSubmission: Represents a photo submission entry.
 

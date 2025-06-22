@@ -1,5 +1,6 @@
 package com.wildlifebackend.wildlife.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,7 +52,10 @@ public class OpenUser extends BaseEntity {
     private Boolean isActive;
 
     @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JsonIgnore
     private Set<OpenSubmission> submissions = new HashSet<>();
     //OpenUser: Represents a user or photographer.
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

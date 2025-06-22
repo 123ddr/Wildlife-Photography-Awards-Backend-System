@@ -31,7 +31,7 @@ public class OpenPhotoController {
     private OpenUserServiceImpl openUserService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('OPENUSER')")
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     public ResponseEntity<?> uploadPhoto(
             @RequestParam("file") MultipartFile file,
             @RequestParam("title") String title,
@@ -71,6 +71,7 @@ public class OpenPhotoController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getPhotoById(@PathVariable("id") Long id) {
         try {
@@ -92,7 +93,7 @@ public class OpenPhotoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('OPENUSER')")
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     public ResponseEntity<?> getUserPhotos(Authentication authentication) {
         try {
             // Get the authenticated user
@@ -117,7 +118,7 @@ public class OpenPhotoController {
     }
 
     @PutMapping("/updatephoto/{id}")
-    @PreAuthorize("hasRole('OPENUSER')")
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     public ResponseEntity<?> updatePhoto(@PathVariable Long id,
                                          @RequestParam String title,
                                          @RequestParam String description) {
@@ -138,7 +139,7 @@ public class OpenPhotoController {
     }
 
     @DeleteMapping("/deletephoto/{id}")
-    @PreAuthorize("hasRole('OPENUSER')")
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     public ResponseEntity<?> deletePhoto(@PathVariable Long id) {
         try {
             openPhotoService.deletePhoto(id);
