@@ -61,7 +61,9 @@ public class SecurityConfig {
                                 "/api/open_submissions",
                                 "/api/schoolsubmission/createSchoolSubmission",
                                 "/auth/forgotpass",
-                                "/api/studentphotosphotos/**"
+                                "/api/studentphotosphotos/**",
+                                "/api/judges/**",
+                                "/api/judgings/**"
                                                 ).permitAll()
 
                         // Role-based access control
