@@ -1,6 +1,7 @@
 package com.wildlifebackend.wildlife.entitiy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wildlifebackend.wildlife.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -57,5 +58,5 @@ public class OpenUser extends BaseEntity {
     //OpenUser: Represents a user or photographer.
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole userRole;
 }

@@ -1,5 +1,6 @@
 package com.wildlifebackend.wildlife.entitiy;
 
+import com.wildlifebackend.wildlife.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +39,7 @@ public class Student extends BaseEntity {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role=Role.STUDENT;
+    private UserRole userRole = UserRole.STUDENT;
 
 }
 
