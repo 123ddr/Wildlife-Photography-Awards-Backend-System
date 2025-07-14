@@ -3,12 +3,11 @@ package com.wildlifebackend.wildlife.entitiy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.Period;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -21,22 +20,35 @@ public class Student extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
 
-    @NotBlank(message = "Last name is required")
-    private String lastName;
+    @NotBlank(message = "school name is required")
+    @Column(name = "School_name")
+    private String schoolName;
 
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
-    @Column(unique = true)
-    private String email;
+    @NotBlank(message = "District is required")
+    private String District;
 
-    @NotNull(message = "Date of birth is required")
-    private LocalDate dateOfBirth;
+    @NotBlank(message = "Zone is required")
+    private String Zone;
+
+    @Email(message = "Invalid school email format")
+    @NotBlank(message = "School email is required")
+    @Column(name = "school_email", unique = true)
+    private String schoolEmail;
 
     @NotBlank(message = "Password is required")
-    private String password;
+    private String Password;
 
+    @Transient
+    @NotBlank(message = "Confirm password is required")
+    private String confirmPassword;
+
+
+    @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private Set<SchoolSubmission> submissions = new HashSet<>();
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
+
 

@@ -3,14 +3,13 @@ package com.wildlifebackend.wildlife.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wildlifebackend.wildlife.dto.response.OpenSubmissionDTO;
-import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
-import com.wildlifebackend.wildlife.service.OpenSubmissionService;
+import com.wildlifebackend.wildlife.dto.response.StudentSubmissionDTO;
+import com.wildlifebackend.wildlife.entitiy.SchoolSubmission;
+import com.wildlifebackend.wildlife.service.SchoolSubmissionService;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,30 +17,27 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 
-
-
 @RestController
-@RequestMapping("/api/open_submissions")
+@RequestMapping("/api/schoolsubmission")
 @Validated
-public class OpenSubmissionController {
+public class SchoolSubmissionController {
 
-    private final OpenSubmissionService openSubmissionService;
+    private final SchoolSubmissionService schoolSubmissionService;
     private final ObjectMapper objectMapper;
 
-    public OpenSubmissionController(OpenSubmissionService openSubmissionService, ObjectMapper objectMapper) {
-        this.openSubmissionService = openSubmissionService;
+    public SchoolSubmissionController(SchoolSubmissionService schoolSubmissionService, ObjectMapper objectMapper) {
+        this.schoolSubmissionService = schoolSubmissionService;
         this.objectMapper = objectMapper;
     }
 
-    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> createSubmission(
+    public ResponseEntity<Map<String, Object>> createSchoolSubmission(
             @RequestPart("data") String submissionJson,
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         try {
             // Convert JSON to DTO manually
-            OpenSubmissionDTO submissionDTO = objectMapper.readValue(submissionJson, OpenSubmissionDTO.class);
+            StudentSubmissionDTO submissionDTO = objectMapper.readValue(submissionJson, StudentSubmissionDTO.class);
 
             // Attach file if available
             if (file != null && !file.isEmpty()) {
@@ -49,10 +45,10 @@ public class OpenSubmissionController {
             }
 
             // Save submission
-            OpenSubmission savedSubmission = openSubmissionService.saveSubmission(submissionDTO);
+            SchoolSubmission savedSubmission = schoolSubmissionService.saveSchoolSubmission(submissionDTO);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "message", "Submission created successfully",
+                    "message", "School submission created successfully",
                     "data", savedSubmission
             ));
 
@@ -70,11 +66,9 @@ public class OpenSubmissionController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "Submission failed",
+                    "error", "School submission failed",
                     "message", e.getMessage()
             ));
         }
     }
-
-
 }

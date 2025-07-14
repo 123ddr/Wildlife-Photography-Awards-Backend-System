@@ -20,6 +20,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
 public class OpenUserController {
 
     private final OpenUserService openUserService;
