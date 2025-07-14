@@ -4,9 +4,7 @@ package com.wildlifebackend.wildlife.service.serviceImpl;
 
 
 import com.wildlifebackend.wildlife.entitiy.Student;
-
 import com.wildlifebackend.wildlife.repository.StudentRepositary;
-
 import com.wildlifebackend.wildlife.service.StudentService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 
 @Service
@@ -35,11 +32,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     public void registerStudent(Student student) {
-        if (studentRepositary.findByEmail(student.getEmail()).isPresent()) {
+        if (studentRepositary.findBySchoolEmail(student.getSchoolEmail()).isPresent()) {
             throw new IllegalArgumentException("id is already in use");
         }
 
-        if (studentRepositary.findByPassword(student.getPassword()).isPresent()) {
+        if (studentRepositary.findBySchoolEmail(student.getPassword()).isPresent()) {
             throw new IllegalArgumentException("id is already in use");
         }
 
@@ -48,7 +45,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Student loginStudent(String email, String password) {
-        Student student = studentRepositary.findByEmail(email)
+        Student student = studentRepositary.findBySchoolEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!passwordEncoder.matches(password, student.getPassword())) {

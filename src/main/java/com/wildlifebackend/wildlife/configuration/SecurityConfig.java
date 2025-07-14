@@ -63,7 +63,9 @@ public class SecurityConfig {
                                 "/auth/forgotpass",
                                 "/api/studentphotosphotos/**",
                                 "/api/judges/**",
-                                "/api/judgings/**"
+                                "/api/judgings/**",
+                                "/api/school/judges/**",
+                                "/api/school/judgings**"
                                                 ).permitAll()
 
                         // Role-based access control

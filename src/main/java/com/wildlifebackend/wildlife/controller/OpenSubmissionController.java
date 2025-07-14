@@ -7,8 +7,6 @@ import com.wildlifebackend.wildlife.dto.response.OpenSubmissionDTO;
 import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.service.OpenSubmissionService;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

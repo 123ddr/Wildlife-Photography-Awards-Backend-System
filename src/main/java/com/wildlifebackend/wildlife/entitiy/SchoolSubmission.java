@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -33,5 +34,12 @@ public class SchoolSubmission {
     private String EntryDescription;
     private String entryUploadPath;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_submissions",
+            joinColumns = @JoinColumn(name = "submission_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<Student> photographers = new HashSet<>();
 
 }
