@@ -2,7 +2,6 @@ package com.wildlifebackend.wildlife.service.serviceImpl;
 
 
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
-import com.wildlifebackend.wildlife.exception.ResourceNotFoundException;
 import com.wildlifebackend.wildlife.repository.OpenUserRepository;
 import com.wildlifebackend.wildlife.service.OpenUserService;
 import jakarta.transaction.Transactional;
@@ -11,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,25 +17,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenUserServiceImpl implements OpenUserService {
 
-    @Autowired
-    private  OpenUserRepository openuserRepository;
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
-    @Autowired
-    private  AuthenticationManager authenticationManager;
+    private final OpenUserRepository openuserRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-//    @Autowired
-//    private  PhotoRepository photoRepository;
-//
-//
-//    public OpenUser createUserWithPhotos(OpenUser user, List<Photo> photos) {
-//        for (Photo photo : photos) {
-//            photo.setOwner(user);
-//        }
-//        user.getPhotos().addAll(photos);
-//        return openuserRepository.save(user);
-//    }
-
+    @Autowired
+    public OpenUserServiceImpl(OpenUserRepository openuserRepository,
+                         PasswordEncoder passwordEncoder,
+                         AuthenticationManager authenticationManager) {
+        this.openuserRepository = openuserRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
 
 
     @Transactional
@@ -76,18 +67,6 @@ public class OpenUserServiceImpl implements OpenUserService {
     public OpenUser getAuthenticatedUser(org.apache.tomcat.util.net.openssl.ciphers.Authentication authentication) {
         return null;
     }
-
-
-//    public OpenUser getAuthenticatedUser(Authentication authentication) {
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            throw new UsernameNotFoundException("Authentication information is missing or invalid.");
-//        }
-//
-//        String email = authentication.getName(); // Assumes username = email
-//
-//        return openuserRepository.findByEmail(email)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-//    }
 
 
 

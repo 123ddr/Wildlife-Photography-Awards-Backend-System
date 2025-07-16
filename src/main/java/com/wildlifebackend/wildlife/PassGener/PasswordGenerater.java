@@ -19,6 +19,4 @@ public class PasswordGenerater {
          return password.toString();
      }
 
-
-
 }
