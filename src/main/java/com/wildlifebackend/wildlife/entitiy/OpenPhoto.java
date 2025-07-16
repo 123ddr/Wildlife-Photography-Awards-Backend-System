@@ -16,8 +16,6 @@ public class OpenPhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoId;
 
-//    private Long openUserId;
-
     private String title;
     private String description;
     private LocalDate uploadDateTime;
@@ -28,5 +26,9 @@ public class OpenPhoto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "open_user_id", nullable = false) // FK column
     private OpenUser openUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category_Open category;
 
 }

@@ -52,4 +52,9 @@ public class OpenSubmission {
 
     @Lob
     private String entryDescription;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category_Open category;
+
 }

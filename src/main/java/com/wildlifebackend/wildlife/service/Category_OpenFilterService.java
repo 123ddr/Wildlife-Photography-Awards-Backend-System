@@ -1,0 +1,52 @@
+package com.wildlifebackend.wildlife.service;
+
+
+import com.wildlifebackend.wildlife.entitiy.Category_Open;
+import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
+import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
+import com.wildlifebackend.wildlife.repository.Category_OpenRepository;
+import com.wildlifebackend.wildlife.repository.OpenPhotoRepo;
+import com.wildlifebackend.wildlife.repository.OpenSubmissionRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class Category_OpenFilterService {
+
+    private final OpenPhotoRepo photoRepository;
+    private final OpenSubmissionRepository submissionRepository;
+    private final Category_OpenRepository categoryRepository;
+
+    @Autowired
+    public Category_OpenFilterService(OpenPhotoRepo photoRepository,
+                                      OpenSubmissionRepository submissionRepository,
+                                      Category_OpenRepository categoryRepository) {
+        this.photoRepository = photoRepository;
+        this.submissionRepository = submissionRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
+    public List<OpenPhoto> getPhotosByCategoryId(Long categoryId) {
+        return photoRepository.findByCategoryId(categoryId);
+    }
+
+    public List<OpenSubmission> getSubmissionsByCategoryId(Long categoryId) {
+        return submissionRepository.findByCategoryId(categoryId);
+    }
+
+    public List<OpenPhoto> getPhotosByCategoryName(String categoryName) {
+        return photoRepository.findByCategoryName(categoryName);
+    }
+
+    public List<OpenSubmission> getSubmissionsByCategoryName(String categoryName) {
+        return submissionRepository.findByCategoryName(categoryName);
+    }
+
+    public List<Category_Open> getAllCategories() {
+        return categoryRepository.findAll();
+    }
+}

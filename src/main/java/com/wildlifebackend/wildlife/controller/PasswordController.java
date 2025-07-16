@@ -40,7 +40,6 @@ public class PasswordController {
             return resetPassword(student.get());
         } else if (openUser.isPresent()) {
             return resetPassword(openUser.get());
-
         }
 
         return ResponseEntity.badRequest().body("Email not found");
@@ -68,4 +67,6 @@ private ResponseEntity<String> resetPassword(Object user){
     return ResponseEntity.ok("New Password sent to your email.");
 
 
-}}
+    }
+
+}

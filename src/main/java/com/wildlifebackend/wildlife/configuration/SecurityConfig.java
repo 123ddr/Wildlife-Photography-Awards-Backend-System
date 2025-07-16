@@ -65,7 +65,8 @@ public class SecurityConfig {
                                 "/api/judges/**",
                                 "/api/judgings/**",
                                 "/api/school/judges/**",
-                                "/api/school/judgings**"
+                                "/api/school/judgings/**",
+                                "/api/categories_open/**"
                                                 ).permitAll()
 
                         // Role-based access control
