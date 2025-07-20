@@ -30,8 +30,12 @@ public class OpenSubmissionDTO {
     private String technicalInfo;
 
     @JsonIgnore
-    private MultipartFile rawFile;
+    private MultipartFile rawFile; // For file upload
+
+    private String rawFilePath;     // For storing the path after upload
 
     private String entryDescription;
+
+    private Long categoryId;
 
 }

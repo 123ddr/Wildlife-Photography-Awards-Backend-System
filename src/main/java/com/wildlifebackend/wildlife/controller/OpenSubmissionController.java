@@ -14,10 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
-
-
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,19 +37,20 @@ public class OpenSubmissionController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> createSubmission(
             @RequestPart("data") String submissionJson,
-            @RequestPart(value = "file", required = false) MultipartFile file
-    ) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            // Convert JSON to DTO manually
             OpenSubmissionDTO submissionDTO = objectMapper.readValue(submissionJson, OpenSubmissionDTO.class);
 
-            // Attach file if available
             if (file != null && !file.isEmpty()) {
-                submissionDTO.setRawFile(file);
+                // Upload the file and get the stored file path
+                String filePath = openSubmissionService.uploadFile(file);
+                // Set the file path in the DTO
+                submissionDTO.setRawFilePath(filePath);
+                // Clear the rawFile field as we don't need to store the MultipartFile
+                submissionDTO.setRawFile(null);
             }
 
-            // Save submission
-            OpenSubmission savedSubmission = openSubmissionService.saveSubmission(submissionDTO);
+            OpenSubmission savedSubmission = openSubmissionService.createSubmission(submissionDTO);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "message", "Submission created successfully",
@@ -57,20 +58,27 @@ public class OpenSubmissionController {
             ));
 
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "error", "Invalid JSON format in 'data' part",
-                    "message", e.getOriginalMessage()
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Invalid JSON format",
+                    "details", e.getOriginalMessage()
             ));
-
         } catch (ConstraintViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            return ResponseEntity.badRequest().body(Map.of(
                     "error", "Validation failed",
-                    "details", e.getConstraintViolations()
+                    "violations", e.getConstraintViolations().stream()
+                            .map(v -> Map.of(
+                                    "field", v.getPropertyPath().toString(),
+                                    "message", v.getMessage()
+                            ))
+                            .collect(Collectors.toList())
             ));
-
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of(
+                    "error", e.getReason()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "Submission failed",
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Submission creation failed",
                     "message", e.getMessage()
             ));
         }
