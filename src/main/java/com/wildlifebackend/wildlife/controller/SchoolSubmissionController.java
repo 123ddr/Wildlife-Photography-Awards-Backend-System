@@ -10,11 +10,14 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -25,27 +28,27 @@ public class SchoolSubmissionController {
     private final SchoolSubmissionService schoolSubmissionService;
     private final ObjectMapper objectMapper;
 
-    public SchoolSubmissionController(SchoolSubmissionService schoolSubmissionService, ObjectMapper objectMapper) {
+    public SchoolSubmissionController(SchoolSubmissionService schoolSubmissionService,
+                                      ObjectMapper objectMapper) {
         this.schoolSubmissionService = schoolSubmissionService;
         this.objectMapper = objectMapper;
     }
 
+    @PreAuthorize("hasAnyRole('SCHOOLUSER', 'ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> createSchoolSubmission(
+    public ResponseEntity<Map<String, Object>> createSubmission(
             @RequestPart("data") String submissionJson,
-            @RequestPart(value = "file", required = false) MultipartFile file
-    ) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            // Convert JSON to DTO manually
             StudentSubmissionDTO submissionDTO = objectMapper.readValue(submissionJson, StudentSubmissionDTO.class);
 
-            // Attach file if available
             if (file != null && !file.isEmpty()) {
-                submissionDTO.setRawFile(file);
+                String filePath = schoolSubmissionService.uploadFile(file);
+                submissionDTO.setRawFilePath(filePath);
+                submissionDTO.setRawFile(null);
             }
 
-            // Save submission
-            SchoolSubmission savedSubmission = schoolSubmissionService.saveSchoolSubmission(submissionDTO);
+            SchoolSubmission savedSubmission = schoolSubmissionService.createSubmission(submissionDTO);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "message", "School submission created successfully",
@@ -53,20 +56,27 @@ public class SchoolSubmissionController {
             ));
 
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "error", "Invalid JSON format in 'data' part",
-                    "message", e.getOriginalMessage()
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Invalid JSON format",
+                    "details", e.getOriginalMessage()
             ));
-
         } catch (ConstraintViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            return ResponseEntity.badRequest().body(Map.of(
                     "error", "Validation failed",
-                    "details", e.getConstraintViolations()
+                    "violations", e.getConstraintViolations().stream()
+                            .map(v -> Map.of(
+                                    "field", v.getPropertyPath().toString(),
+                                    "message", v.getMessage()
+                            ))
+                            .collect(Collectors.toList())
             ));
-
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of(
+                    "error", e.getReason()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "School submission failed",
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "School submission creation failed",
                     "message", e.getMessage()
             ));
         }

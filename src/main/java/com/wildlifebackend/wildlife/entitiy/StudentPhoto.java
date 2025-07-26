@@ -22,7 +22,11 @@ public class StudentPhoto {
     @Lob
     private byte[] fileData;
 
-    @ManyToOne
-    @JoinColumn(name="student_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_user_id", nullable = false) // FK column
     private Student student;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="category_id")
+    private Category_School category;
 }
