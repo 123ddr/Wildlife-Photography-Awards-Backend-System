@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("openCategoryFilterService")  // Unique name
 @Transactional
 public class Category_OpenFilterService {
 
