@@ -18,17 +18,21 @@ public class OpenPhoto {
 
     private String title;
     private String description;
-    private LocalDate uploadDateTime;
 
     @Lob
+    @Column(name = "file_data", length = 16777215) // 16MB for MySQL
     private byte[] fileData;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_user_id", nullable = false) // FK column
+    @JoinColumn(name = "open_user_id", nullable = false)
     private OpenUser openUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category_Open category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submission_id")
+    private OpenSubmission submission;
 
 }

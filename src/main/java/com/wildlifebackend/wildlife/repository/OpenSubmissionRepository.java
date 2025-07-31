@@ -12,11 +12,11 @@ import java.util.List;
 @Repository
 public interface OpenSubmissionRepository extends JpaRepository<OpenSubmission, Long> {
 
-    // Find submissions by category
-    @Query("SELECT s FROM OpenSubmission s WHERE s.category.categoryId = :categoryId")
-    List<OpenSubmission> findByCategoryId(@Param("categoryId") Long categoryId);
-
-    // Find submissions by category name
-    @Query("SELECT s FROM OpenSubmission s WHERE s.category.name = :categoryName")
-    List<OpenSubmission> findByCategoryName(@Param("categoryName") String categoryName);
+//    // Find submissions by category
+//    @Query("SELECT s FROM OpenSubmission s WHERE s.category.categoryId = :categoryId")
+//    List<OpenSubmission> findByCategoryId(@Param("categoryId") Long categoryId);
+//
+//    // Find submissions by category name
+//    @Query("SELECT s FROM OpenSubmission s WHERE s.category.name = :categoryName")
+//    List<OpenSubmission> findByCategoryName(@Param("categoryName") String categoryName);
 }

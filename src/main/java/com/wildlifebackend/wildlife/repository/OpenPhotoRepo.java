@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface OpenPhotoRepo extends JpaRepository<OpenPhoto,Long> {
-    List<OpenPhoto> findByOpenUserId(Long openuserId);
 
     // Find photos by category
     @Query("SELECT p FROM OpenPhoto p WHERE p.category.categoryId = :categoryId")
