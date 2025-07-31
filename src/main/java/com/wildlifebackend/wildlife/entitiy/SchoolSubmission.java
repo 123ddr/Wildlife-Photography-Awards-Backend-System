@@ -34,7 +34,7 @@ public class SchoolSubmission {
     //OpenSubmission: Represents a photo submission entry.
 
     @ElementCollection
-    @CollectionTable(name = "entry_categories", joinColumns = @JoinColumn(name = "submission_id"))
+    @CollectionTable(name = "entry_categories_school", joinColumns = @JoinColumn(name = "submission_id_school"))
     @Column(name = "category")
     private Set<String> entryCategories;
 

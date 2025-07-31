@@ -11,5 +11,7 @@ public interface OpenUserRepository extends JpaRepository<OpenUser, Long> {
 
     Optional<OpenUser> findByEmail(String email);
     Optional<OpenUser> findByNic(String nic);
+    // New method to find by formatted ID
+//    Optional<OpenUser> findByFormattedId(String formattedId);
 
 }

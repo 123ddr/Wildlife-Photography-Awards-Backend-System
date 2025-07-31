@@ -2,23 +2,21 @@ package com.wildlifebackend.wildlife.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jdk.jshell.Snippet;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Set;
+
 
 @Data
 public class OpenSubmissionDTO {
 
-    @NotEmpty(message = "At least one photographer ID is required")
-    private Set<Long> photographerIds;
+    @NotNull(message = "Photographer ID is required")
+    private Long photographerId;
 
-    private Set<String> entryCategories;
+    @NotBlank(message = "Entry category is required")
+    private String entryCategory;  // Single category selection
 
     @NotBlank(message = "Entry title is required")
     private String entryTitle;
@@ -37,5 +35,18 @@ public class OpenSubmissionDTO {
     private String entryDescription;
 
     private Long categoryId;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    private String email;
+
+    @NotBlank(message = "Mobile number is required")
+    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Mobile number should be valid (10-15 digits with optional + prefix)")
+    private String mobileNumber;
+
+    // Helper method to get formatted photographer ID
+    public String getFormattedPhotographerId() {
+        return String.format("OpenUser_ID_%04d", photographerId);
+    }
 
 }

@@ -34,17 +34,17 @@ public class Category_OpenFilterService {
         return photoRepository.findByCategoryId(categoryId);
     }
 
-    public List<OpenSubmission> getSubmissionsByCategoryId(Long categoryId) {
-        return submissionRepository.findByCategoryId(categoryId);
-    }
+//    public List<OpenSubmission> getSubmissionsByCategoryId(Long categoryId) {
+//        return submissionRepository.findByCategoryId(categoryId);
+//    }
 
     public List<OpenPhoto> getPhotosByCategoryName(String categoryName) {
         return photoRepository.findByCategoryName(categoryName);
     }
 
-    public List<OpenSubmission> getSubmissionsByCategoryName(String categoryName) {
-        return submissionRepository.findByCategoryName(categoryName);
-    }
+//    public List<OpenSubmission> getSubmissionsByCategoryName(String categoryName) {
+//        return submissionRepository.findByCategoryName(categoryName);
+//    }
 
     public List<Category_Open> getAllCategories() {
         return categoryRepository.findAll();
