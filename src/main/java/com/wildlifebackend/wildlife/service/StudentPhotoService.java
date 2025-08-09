@@ -1,83 +1,68 @@
 package com.wildlifebackend.wildlife.service;
 
-import com.wildlifebackend.wildlife.entitiy.Student;
+import com.wildlifebackend.wildlife.entitiy.SchoolSubmission;
 import com.wildlifebackend.wildlife.entitiy.StudentPhoto;
-import com.wildlifebackend.wildlife.exception.ResourceNotFoundException;
+import com.wildlifebackend.wildlife.repository.SchoolSubmissionRepositry;
 import com.wildlifebackend.wildlife.repository.StudentPhotoRepo;
 import com.wildlifebackend.wildlife.repository.StudentRepositary;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class StudentPhotoService {
 
-    @Autowired
-    private StudentPhotoRepo studentPhotoRepo;
-
-    @Autowired
-    private StudentRepositary studentRepositary;
-
-    public StudentPhoto uploadPhoto(Long studentId, MultipartFile file, String title, String description) throws IOException {
-        // Validate student exists
-        Student student = studentRepositary.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with ID: " + studentId));
-
-        // Validate file
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File cannot be empty");
-        }
-        if (!file.getContentType().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed");
-        }
-
-        // Create and save photo
-        StudentPhoto photo = new StudentPhoto();
-        photo.setTitle(title);
-        photo.setDescription(description);
-        photo.setUploadDateTime(LocalDate.now());
-        photo.setFileData(file.getBytes());
-        photo.setStudent(student); // Associate with student
-
-        return studentPhotoRepo.save(photo);
-    }
-
-    public StudentPhoto getPhotoById(Long photoId) {
-        return studentPhotoRepo.findById(photoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Photo not found with ID: " + photoId));
-    }
-
-    public List<StudentPhoto> getAllPhotosByStudent(Long studentId) {
-        if (!studentRepositary.existsById(studentId)) {
-            throw new ResourceNotFoundException("Student not found with ID: " + studentId);
-        }
-        return studentPhotoRepo.findByStudentId(studentId);
-    }
+    private final StudentPhotoRepo studentPhotoRepository;
+    private final SchoolSubmissionRepositry schoolSubmissionRepository;
+    private final StudentRepositary studentRepository;
 
     @Transactional
-    public StudentPhoto updatePhotoDetails(Long photoId, String title, String description) {
-        StudentPhoto photo = getPhotoById(photoId);
+    public StudentPhoto createPhotoFromSubmission(Long submissionId) throws IOException {
+        SchoolSubmission submission = schoolSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Submission not found with id: " + submissionId));
 
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be empty");
+        StudentPhoto photo = new StudentPhoto();
+
+        // Transfer data from submission to photo
+        photo.setTitle(submission.getEntryTitle());
+        photo.setDescription(submission.getEntryDescription());
+
+
+        // Handle file data
+        if (submission.getRawFilePath() != null) {
+            Path path = Paths.get(submission.getRawFilePath());
+            try {
+                photo.setFileData(Files.readAllBytes(path));
+                // Optionally delete the temp file after transfer
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                throw new IOException("Failed to process file: " + e.getMessage(), e);
+            }
         }
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Description cannot be empty");
+
+//        // Set relationships
+//        photo.setStudent(submission.getStudent());
+//        photo.setCategory(submission.getCategory());
+//        photo.setSubmission(submission);
+
+        // Set relationships - now using single photographer instead of set
+        if (submission.getPhotographer() != null) {
+            photo.setStudent(submission.getPhotographer());
         }
 
-        photo.setTitle(title.trim());
-        photo.setDescription(description.trim());
+        photo.setCategory(submission.getCategory());
+        photo.setSubmission(submission);
 
-        return studentPhotoRepo.save(photo);
+        return studentPhotoRepository.save(photo);
     }
 
-    public void deletePhoto(Long photoId) {
-        StudentPhoto photo = getPhotoById(photoId);
-        studentPhotoRepo.delete(photo);
-    }
+    // Additional methods for school context could be added here
 }

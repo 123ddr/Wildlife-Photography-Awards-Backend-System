@@ -29,4 +29,8 @@ public class StudentPhoto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="category_id")
     private Category_School category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submission_id")
+    private SchoolSubmission submission;
 }

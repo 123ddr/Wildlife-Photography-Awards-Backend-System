@@ -4,10 +4,11 @@ import com.wildlifebackend.wildlife.dto.response.StudentSubmissionDTO;
 import com.wildlifebackend.wildlife.entitiy.Category_School;
 import com.wildlifebackend.wildlife.entitiy.SchoolSubmission;
 import com.wildlifebackend.wildlife.entitiy.Student;
-import com.wildlifebackend.wildlife.repository.Category_SchoolRepository;
-import com.wildlifebackend.wildlife.repository.SchoolSubmissionRepositry;
-import com.wildlifebackend.wildlife.repository.StudentRepositary;
+import com.wildlifebackend.wildlife.repository.*;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,104 +21,162 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SchoolSubmissionService {
 
     private final SchoolSubmissionRepositry schoolSubmissionRepository;
     private final StudentRepositary studentRepository;
     private final Category_SchoolRepository categoryRepository;
-    private final Path uploadDir = Paths.get("school-uploads");
+    private final StudentPhotoService studentPhotoService;
+    private final Path uploadDir = Paths.get("school-uploads").toAbsolutePath().normalize();
 
-    public SchoolSubmissionService(SchoolSubmissionRepositry schoolSubmissionRepository,
-                                   StudentRepositary studentRepository,
-                                   Category_SchoolRepository categoryRepository) {
-        this.schoolSubmissionRepository = schoolSubmissionRepository;
-        this.studentRepository = studentRepository;
-        this.categoryRepository = categoryRepository;
+    @PostConstruct
+    public void init() throws IOException {
+        Files.createDirectories(uploadDir);
+    }
 
+    @Transactional
+    public SchoolSubmission createSubmission(StudentSubmissionDTO dto, MultipartFile file) {
         try {
-            Files.createDirectories(uploadDir);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create upload directory for school submissions", e);
-        }
-    }
+            validateSubmission(dto);
 
-    public SchoolSubmission createSubmission(StudentSubmissionDTO dto) {
-        validateSubmission(dto);
+            // Handle file upload
+            String filePath = null;
+            if (file != null && !file.isEmpty()) {
+                filePath = uploadFile(file);
+            }
 
-        SchoolSubmission submission = new SchoolSubmission();
-        mapDtoToEntity(dto, submission);
-
-        SchoolSubmission savedSubmission = schoolSubmissionRepository.save(submission);
-        updateStudentRelationships(savedSubmission);
-
-        return savedSubmission;
-    }
-
-    private void mapDtoToEntity(StudentSubmissionDTO dto, SchoolSubmission submission) {
-        submission.setEntryTitle(dto.getEntryTitle());
-        submission.setDateOfPhotograph(dto.getDateOfPhotograph());
-        submission.setTechnicalInfo(dto.getTechnicalInfo());
-        submission.setEntryDescription(dto.getEntryDescription());
-        submission.setEntryCategories(dto.getEntryCategories());
-        submission.setRawFilePath(dto.getRawFilePath());
-
-        // Set students (photographers)
-        Set<Student> photographers = studentRepository.findAllById(dto.getPhotographerIds())
-                .stream()
-                .collect(Collectors.toSet());
-        submission.setPhotographers(photographers);
-
-        // Set category if provided
-        if (dto.getCategoryId() != null) {
-            Category_School category = categoryRepository.findById(dto.getCategoryId())
+            // Get the primary student
+            Student photographer = studentRepository.findById(dto.getPhotographerId())
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "School category not found with id: " + dto.getCategoryId()));
-            submission.setCategory(category);
-        }
-    }
+                            HttpStatus.BAD_REQUEST, "Photographer not found"));
 
-    private void updateStudentRelationships(SchoolSubmission submission) {
-        submission.getPhotographers().forEach(photographer -> {
-            photographer.getSubmissions().add(submission);
+            // Create submission
+            SchoolSubmission submission = new SchoolSubmission();
+            submission.setEntryTitle(dto.getEntryTitle());
+            submission.setDateOfPhotograph(dto.getDateOfPhotograph());
+            submission.setTechnicalInfo(dto.getTechnicalInfo());
+            submission.setEntryDescription(dto.getEntryDescription());
+            submission.setRawFilePath(filePath != null ? filePath : dto.getRawFilePath());
+            submission.setEmail(dto.getEmail());
+            submission.setMobileNumber(dto.getMobileNumber());
+
+            submission.setEntryCategory(dto.getEntryCategory());
+
+            // Set both the student relationship and formatted ID
+            submission.setPhotographer(photographer);
+            submission.setPhotographerId(String.format("Student_ID_%04d", photographer.getId()));
+
+            // Handle category relationship
+            if (dto.getCategoryId() != null) {
+                Category_School category = categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST, "Category not found"));
+                submission.setCategory(category);
+            }
+
+//            // Set photographers if provided
+//            if (dto.getPhotographerId() != null && !dto.getPhotographerId().isEmpty()) {
+//                Set<Student> photographers = studentRepository.findAllById(dto.getPhotographerIds())
+//                        .stream()
+//                        .collect(Collectors.toSet());
+//                submission.setPhotographers(photographers);
+//            }
+
+            // Save the submission
+            SchoolSubmission savedSubmission = schoolSubmissionRepository.save(submission);
+
+            // Add submission to photographer's list
+            photographer.getSubmissions().add(savedSubmission);
             studentRepository.save(photographer);
-        });
+
+//            // Update photographers' relationships
+//            if (savedSubmission.getPhotographers() != null) {
+//                savedSubmission.getPhotographers().forEach(photographer -> {
+//                    photographer.getPhotographedSubmissions().add(savedSubmission);
+//                    studentRepository.save(photographer);
+//                });
+//            }
+
+            // Transfer to StudentPhoto table if file exists
+            if (filePath != null || dto.getRawFilePath() != null) {
+                studentPhotoService.createPhotoFromSubmission(savedSubmission.getId());
+            }
+
+            return savedSubmission;
+
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Failed to create submission: " + e.getMostSpecificCause().getMessage()
+            );
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "File processing error: " + e.getMessage()
+            );
+        }
     }
 
     private void validateSubmission(StudentSubmissionDTO dto) {
-        if (dto.getPhotographerIds() == null || dto.getPhotographerIds().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one student ID is required");
+        if (dto.getPhotographerId() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Student ID is required"
+            );
         }
 
-        if (dto.getEntryCategories() != null) {
-            dto.getEntryCategories().removeIf(String::isBlank);
+        if (dto.getEntryCategory() == null || dto.getEntryCategory().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "At least one entry category is required"
+            );
+        }
+
+        // Add additional validations as needed
+        if (dto.getEntryTitle() == null || dto.getEntryTitle().isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Entry title is required"
+            );
         }
     }
 
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "File is empty"
+            );
         }
 
-        String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        try {
-            if (originalFilename.contains("..")) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file path");
-            }
+        String originalFilename = StringUtils.cleanPath(
+                Objects.requireNonNull(file.getOriginalFilename())
+        );
 
-            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String uniqueFilename = "school-" + UUID.randomUUID() + fileExtension;
-            Path targetLocation = uploadDir.resolve(uniqueFilename);
-
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            return targetLocation.toString();
-        } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to store school submission file", ex);
+        if (originalFilename.contains("..")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid file path"
+            );
         }
+
+        String fileExtension = originalFilename.substring(
+                originalFilename.lastIndexOf(".")
+        );
+        String uniqueFilename = "school-" + UUID.randomUUID() + fileExtension;
+        Path targetLocation = uploadDir.resolve(uniqueFilename);
+
+        Files.copy(
+                file.getInputStream(),
+                targetLocation,
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        return targetLocation.toString();
     }
 }

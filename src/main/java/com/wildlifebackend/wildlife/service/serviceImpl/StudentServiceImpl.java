@@ -31,7 +31,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     public void registerStudent(Student student) {
-        if (studentRepositary.findBySchoolEmail(student.getSchoolEmail()).isPresent()) {
+        if (studentRepositary.findBySchoolEmail(student.getEmail()).isPresent()) {
             throw new IllegalArgumentException("id is already in use");
         }
 

@@ -4,12 +4,12 @@ import com.wildlifebackend.wildlife.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
 
 @Entity
 @Setter
@@ -21,29 +21,48 @@ public class Student extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StudentPhoto> photos = new ArrayList<>();
 
-    @NotBlank(message = "school name is required")
-    @Column(name = "School_name")
+    @NotBlank(message = "Name is required")
+    @Size(max = 100, message = "Name must be less than 100 characters")
+    private String name;
+
+    @Column(name = "date_of_birth")
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
+
+    @NotBlank(message = "Guardian's name is required")
+    @Column(name = "guardian_name")
+    @Size(max = 100, message = "Guardian's name must be less than 100 characters")
+    private String guardianName;
+
+    @NotBlank(message = "Contact number is required")
+    @Column(name = "contact_number")
+    @Pattern(regexp = "^[0-9]{10,15}$", message = "Contact number must be 10-15 digits")
+    private String contactNumber;
+
+    @NotBlank(message = "School name is required")
+    @Column(name = "school_name")
+    @Size(max = 200, message = "School name must be less than 200 characters")
     private String schoolName;
 
-    @NotBlank(message = "District is required")
-    private String District;
+    @NotBlank(message = "School address is required")
+    @Column(name = "school_address")
+    @Size(max = 500, message = "School address must be less than 500 characters")
+    private String schoolAddress;
 
-    @NotBlank(message = "Zone is required")
-    private String Zone;
-
-    @Email(message = "Invalid school email format")
-    @NotBlank(message = "School email is required")
-    @Column(name = "school_email", unique = true)
-    private String schoolEmail;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    @Column(unique = true)
+    private String email;
 
     @NotBlank(message = "Password is required")
-    private String Password;
+    private String password;
 
     @Transient
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
-
 
     @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Set<SchoolSubmission> submissions = new HashSet<>();
@@ -54,5 +73,3 @@ public class Student extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 }
-
-
