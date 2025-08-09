@@ -23,11 +23,11 @@ import java.util.Date;
 @CrossOrigin(origins = "*")
 public class OpenUserController {
 
-    private final OpenUserService openUserService;
+    private final OpenUserServiceImpl openUserService;
     private final JwtConfig jwtConfig;
 
     @Autowired
-    public OpenUserController( OpenUserService openUserService, JwtConfig jwtConfig) {
+    public OpenUserController( OpenUserServiceImpl openUserService, JwtConfig jwtConfig) {
         this.openUserService = openUserService;
         this.jwtConfig = jwtConfig;
     }

@@ -55,7 +55,7 @@ public class Student extends BaseEntity {
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     @Column(unique = true)
-    private String email;
+    private String schoolEmail;
 
     @NotBlank(message = "Password is required")
     private String password;
@@ -64,7 +64,7 @@ public class Student extends BaseEntity {
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
-    @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToMany(mappedBy = "photographer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SchoolSubmission> submissions = new HashSet<>();
 
     @Column(name = "is_active")
