@@ -1,103 +1,65 @@
 package com.wildlifebackend.wildlife.service;
 
 
+
 import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
-import com.wildlifebackend.wildlife.entitiy.OpenUser;
-import com.wildlifebackend.wildlife.exception.ResourceNotFoundException;
+import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.repository.OpenPhotoRepo;
+import com.wildlifebackend.wildlife.repository.OpenSubmissionRepository;
 import com.wildlifebackend.wildlife.repository.OpenUserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class OpenPhotoService {
 
-    @Autowired
-    private OpenPhotoRepo openPhotoRepo;
-
-    @Autowired
-    private OpenUserRepository openuserRepositary;
-
-
-    public OpenPhoto uploadPhoto(Long openUserId, MultipartFile file, String title, String description) throws IOException {
-
-        // Validate and fetch the user
-        OpenUser openUser = openuserRepositary.findById(openUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + openUserId));
-
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
-
-        if (!file.getContentType().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed");
-        }
-
-        // Prepare and populate OpenPhoto entity
-        OpenPhoto openPhoto = new OpenPhoto();
-        openPhoto.setTitle(title);
-        openPhoto.setDescription(description);
-        openPhoto.setUploadDateTime(LocalDate.now()); // Important!
-        openPhoto.setFileData(file.getBytes());
-        openPhoto.setOpenUser(openUser);
-
-        return openPhotoRepo.save(openPhoto);
-    }
-
-
-    public OpenPhoto getPhotoById(Long photoId) {
-        if (photoId == null || photoId <= 0) {
-            throw new IllegalArgumentException("Invalid photo ID provided.");
-        }
-
-        return openPhotoRepo.findById(photoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Photo not found with ID: " + photoId));
-    }
-
-    public List<OpenPhoto> getAllPhotosByOpenUser(Long openUserId) {
-        if (openUserId == null || openUserId <= 0) {
-            throw new IllegalArgumentException("Invalid OpenUser ID provided.");
-        }
-
-        boolean userExists = openuserRepositary.existsById(openUserId);
-        if (!userExists) {
-            throw new ResourceNotFoundException("OpenUser not found with ID: " + openUserId);
-        }
-
-        return openPhotoRepo.findByOpenUserId(openUserId);
-    }
+    private final OpenPhotoRepo openPhotoRepository;
+    private final OpenSubmissionRepository openSubmissionRepository;
+    private final OpenUserRepository openUserRepository;
 
     @Transactional
-    public OpenPhoto updatePhotoDetails(Long photoId, String title, String description) {
-        OpenPhoto openPhoto = getPhotoById(photoId);
+    public OpenPhoto createPhotoFromSubmission(Long submissionId) throws IOException {
+        OpenSubmission submission = openSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Submission not found with id: " + submissionId));
 
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be empty");
+        OpenPhoto photo = new OpenPhoto();
+
+        // Transfer data from submission to photo
+        photo.setTitle(submission.getEntryTitle());
+        photo.setDescription(submission.getEntryDescription());
+
+        // Handle file data
+        if (submission.getRawFilePath() != null) {
+            Path path = Paths.get(submission.getRawFilePath());
+            try {
+                photo.setFileData(Files.readAllBytes(path));
+                // Optionally delete the temp file after transfer
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                throw new IOException("Failed to process file: " + e.getMessage(), e);
+            }
         }
 
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Description cannot be empty");
+        // Set relationships - now using single photographer instead of set
+        if (submission.getPhotographer() != null) {
+            photo.setOpenUser(submission.getPhotographer());
         }
 
-        openPhoto.setTitle(title.trim());
-        openPhoto.setDescription(description.trim());
+        photo.setCategory(submission.getCategory());
+        photo.setSubmission(submission);
 
-        return openPhotoRepo.save(openPhoto);
+        return openPhotoRepository.save(photo);
     }
-
-
-    public void deletePhoto(Long photoId) {
-        OpenPhoto photo = openPhotoRepo.findById(photoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Photo not found with ID: " + photoId));
-
-        openPhotoRepo.delete(photo);
-    }
-
 
 }

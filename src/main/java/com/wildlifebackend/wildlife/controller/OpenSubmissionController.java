@@ -1,53 +1,113 @@
 package com.wildlifebackend.wildlife.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wildlifebackend.wildlife.dto.response.OpenSubmissionDTO;
 import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.service.OpenSubmissionService;
 import jakarta.validation.Valid;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+
+import java.util.List;
 import java.util.Map;
-
 
 
 
 @RestController
 @RequestMapping("/api/open_submissions")
+@RequiredArgsConstructor
 @Validated
 public class OpenSubmissionController {
-
     private final OpenSubmissionService openSubmissionService;
-
-    public OpenSubmissionController(OpenSubmissionService openSubmissionService) {
-        this.openSubmissionService = openSubmissionService;
-    }
+    private final ObjectMapper objectMapper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('OPENUSER', 'ADMIN')")
     public ResponseEntity<?> createSubmission(
-            @RequestPart("data") @Valid OpenSubmissionDTO submissionDTO,
-            @RequestPart(value = "file", required = false) MultipartFile file
-    ) {
+            @RequestPart("data") @Valid String submissionJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
         try {
-            if (file != null && !file.isEmpty()) {
-                submissionDTO.setRawFile(file);
+            // Parse JSON to DTO
+            OpenSubmissionDTO dto = objectMapper.readValue(submissionJson, OpenSubmissionDTO.class);
+
+            // Validate required fields
+            if (dto.getPhotographerId() == null) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Validation error",
+                        "message", "Photographer ID is required"
+                ));
             }
 
-            OpenSubmission savedSubmission = openSubmissionService.saveSubmission(submissionDTO);
+            if (dto.getEntryCategory() == null || dto.getEntryCategory().isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Validation error",
+                        "message", "Entry category is required"
+                ));
+            }
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedSubmission);
+            // Create submission
+            OpenSubmission submission = openSubmissionService.createSubmission(dto, file);
 
+            // Build success response
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "status", "success",
+                    "message", "Submission created successfully",
+                    "data", Map.of(
+                            "submissionId", submission.getId(),
+                            "photographerId", submission.getPhotographerId(),
+                            "entryTitle", submission.getEntryTitle(),
+                            "entryCategory", submission.getEntryCategory(),
+                            "filePath", submission.getRawFilePath()
+                    )
+            ));
+
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Invalid request format",
+                    "message", "Malformed JSON data"
+            ));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of(
+                    "error", "Submission error",
+                    "message", e.getReason(),
+                    "status", e.getStatusCode().value()
+            ));
         } catch (Exception e) {
-            // Return structured error response
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "error", "Submission failed",
-                    "message", e.getMessage()
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "An unexpected error occurred"
+            ));
+        }
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getAllowedCategories() {
+        try {
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", List.of(
+                            "LANDSCAPE",
+                            "PORTRAIT",
+                            "WILDLIFE",
+                            "STREET",
+                            "MACRO"
+                    )
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "Failed to retrieve categories"
             ));
         }
     }

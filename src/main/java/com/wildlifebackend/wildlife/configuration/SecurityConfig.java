@@ -61,8 +61,19 @@ public class SecurityConfig {
                                 "/api/open_submissions",
                                 "/api/schoolsubmission/createSchoolSubmission",
                                 "/auth/forgotpass",
-                                "/api/studentphotosphotos/**"
+                                "/api/studentphotosphotos/**",
+                                "/api/judges/**",
+                                "/api/judgings/**",
+                                "/api/school/judges/**",
+                                "/api/school/judgings/**",
+                                "/api/categories_open/**"
                                                 ).permitAll()
+
+                        // Role-based access control
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/open/**").hasAnyRole("OPENUSER", "ADMIN", "STUDENT")
+
                         .anyRequest().authenticated()
                 )
 

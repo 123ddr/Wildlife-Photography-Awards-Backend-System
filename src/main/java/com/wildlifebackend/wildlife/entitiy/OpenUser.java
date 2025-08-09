@@ -1,5 +1,7 @@
 package com.wildlifebackend.wildlife.entitiy;
 
+
+import com.wildlifebackend.wildlife.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,9 +11,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "open_users")
@@ -50,8 +51,10 @@ public class OpenUser extends BaseEntity {
     @Column
     private Boolean isActive;
 
-    @ManyToMany(mappedBy = "photographers", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private Set<OpenSubmission> submissions = new HashSet<>();
+    @OneToMany(mappedBy = "photographer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OpenSubmission> submissions = new ArrayList<>();
     //OpenUser: Represents a user or photographer.
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 }

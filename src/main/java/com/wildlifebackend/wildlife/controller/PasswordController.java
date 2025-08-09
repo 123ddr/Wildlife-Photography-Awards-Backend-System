@@ -32,7 +32,7 @@ public class PasswordController {
 
     @PostMapping("/forgotpass")
     public ResponseEntity<String> forgotPass(@RequestParam String email) {
-        Optional<Student> student = studentRepositary.findByEmail(email);
+        Optional<Student> student = studentRepositary.findBySchoolEmail(email);
         Optional<OpenUser> openUser = openUserRepository.findByEmail(email);
 
 
@@ -40,7 +40,6 @@ public class PasswordController {
             return resetPassword(student.get());
         } else if (openUser.isPresent()) {
             return resetPassword(openUser.get());
-
         }
 
         return ResponseEntity.badRequest().body("Email not found");
@@ -62,10 +61,12 @@ private ResponseEntity<String> resetPassword(Object user){
     }
 
 
-    emailService.sendEmail(((user instanceof Student)?((Student) user).getEmail():((OpenUser)user).getEmail()),
+    emailService.sendEmail(((user instanceof Student)?((Student) user).getSchoolEmail():((OpenUser)user).getEmail()),
           "Password Reset","Your new password "+newPassword);
 
     return ResponseEntity.ok("New Password sent to your email.");
 
 
-}}
+    }
+
+}

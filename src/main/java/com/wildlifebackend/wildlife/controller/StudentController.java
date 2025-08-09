@@ -3,11 +3,7 @@ package com.wildlifebackend.wildlife.controller;
 import com.wildlifebackend.wildlife.configuration.JwtConfig;
 import com.wildlifebackend.wildlife.dto.response.APIResponse;
 import com.wildlifebackend.wildlife.dto.response.TokenResponse;
-import com.wildlifebackend.wildlife.entitiy.OpenUser;
 import com.wildlifebackend.wildlife.entitiy.Student;
-import com.wildlifebackend.wildlife.repository.StudentRepositary;
-import com.wildlifebackend.wildlife.service.OpenUserService;
-import com.wildlifebackend.wildlife.service.StudentService;
 import com.wildlifebackend.wildlife.service.serviceImpl.StudentServiceImpl;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
@@ -47,13 +43,13 @@ public class StudentController {
 
 
     @PostMapping("/login_student")
-    public ResponseEntity<TokenResponse> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<TokenResponse> loginStudent(@RequestParam String schoolEmail, @RequestParam String password) {
         try {
-            Student loginStudent = studentService.loginStudent(email, password);
+            Student loginStudent = studentService.loginStudent(schoolEmail, password);
 
             if (loginStudent != null) {
                 String token = Jwts.builder()
-                        .setSubject(email)
+                        .setSubject(schoolEmail)
                         .setIssuedAt(new Date())
                         .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
                         .signWith(jwtConfig.getSecretKey())
