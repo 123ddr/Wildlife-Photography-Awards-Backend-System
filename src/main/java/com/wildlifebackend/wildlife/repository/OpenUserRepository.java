@@ -3,6 +3,7 @@ package com.wildlifebackend.wildlife.repository;
 
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,7 +12,7 @@ public interface OpenUserRepository extends JpaRepository<OpenUser, Long> {
 
     Optional<OpenUser> findByEmail(String email);
     Optional<OpenUser> findByNic(String nic);
-    // New method to find by formatted ID
-//    Optional<OpenUser> findByFormattedId(String formattedId);
 
+    @Query("SELECT MAX(u.id) FROM OpenUser u")
+    Optional<Long> findMaxId();
 }

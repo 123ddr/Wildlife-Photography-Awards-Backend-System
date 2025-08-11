@@ -72,4 +72,7 @@ public class Student extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @Column(name = "photographer_id", unique = true, updatable = false)
+    private String photographerId;
 }

@@ -1,10 +1,6 @@
 package com.wildlifebackend.wildlife.entitiy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wildlifebackend.wildlife.entitiy.Category_School;
-import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
-import com.wildlifebackend.wildlife.entitiy.Student;
-import com.wildlifebackend.wildlife.entitiy.StudentPhoto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;

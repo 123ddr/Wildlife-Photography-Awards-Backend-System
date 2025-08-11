@@ -60,12 +60,10 @@ private ResponseEntity<String> resetPassword(Object user){
         openUserRepository.save(openUser);
     }
 
-
     emailService.sendEmail(((user instanceof Student)?((Student) user).getSchoolEmail():((OpenUser)user).getEmail()),
           "Password Reset","Your new password "+newPassword);
 
     return ResponseEntity.ok("New Password sent to your email.");
-
 
     }
 
