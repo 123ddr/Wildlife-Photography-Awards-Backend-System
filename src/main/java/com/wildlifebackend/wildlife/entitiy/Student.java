@@ -75,4 +75,5 @@ public class Student extends BaseEntity {
 
     @Column(name = "photographer_id", unique = true, updatable = false)
     private String photographerId;
+
 }

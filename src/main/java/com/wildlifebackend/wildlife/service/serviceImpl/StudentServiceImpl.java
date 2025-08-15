@@ -4,6 +4,7 @@ package com.wildlifebackend.wildlife.service.serviceImpl;
 
 import com.wildlifebackend.wildlife.entitiy.Student;
 import com.wildlifebackend.wildlife.repository.StudentRepositary;
+import com.wildlifebackend.wildlife.service.EmailService;
 import com.wildlifebackend.wildlife.service.StudentService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,12 +22,14 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepositary studentRepositary;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     // Constructor
-    public StudentServiceImpl(StudentRepositary studentRepositary, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public StudentServiceImpl(StudentRepositary studentRepositary, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService) {
         this.studentRepositary = studentRepositary;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -39,8 +42,30 @@ public class StudentServiceImpl implements StudentService {
             throw new IllegalArgumentException("id is already in use");
         }
 
-        student.setPassword(passwordEncoder.encode(student.getPassword())); // Hash password
-        studentRepositary.save(student);
+        // 3. Encode password before saving
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
+
+        // 4. Set student as active (optional, if applicable)
+        student.setIsActive(true);
+
+        // 5. Get max current ID (or 0 if no students exist)
+        Long maxId = studentRepositary.findMaxId().orElse(0L);
+
+        // 6. Generate next student ID (e.g., "STU_0001")
+        String studentId = String.format("STU_%04d", maxId + 1);
+
+        // 7. Assign generated student ID
+        student.setPhotographerId(studentId);
+
+        // 8. Save student with generated ID
+        Student savedStudent = studentRepositary.save(student);
+
+        // 9. Send welcome email (optional)
+        emailService.sendWelcomeEmail(
+                savedStudent.getSchoolEmail(),
+                savedStudent.getName(),
+                savedStudent.getPhotographerId()
+        );
     }
 
     public Student loginStudent(String email, String password) {
