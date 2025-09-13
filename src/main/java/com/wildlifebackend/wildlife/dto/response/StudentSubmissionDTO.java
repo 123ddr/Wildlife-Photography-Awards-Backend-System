@@ -1,16 +1,14 @@
 package com.wildlifebackend.wildlife.dto.response;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Set;
+
 
 @Data
 public class StudentSubmissionDTO {

@@ -17,15 +17,12 @@ import java.util.List;
 public class Category_SchoolFilterService {
 
     private final StudentPhotoRepo photoRepository;
-    private final SchoolSubmissionRepositry submissionRepository;
     private final Category_SchoolRepository categoryRepository;
 
     @Autowired
     public Category_SchoolFilterService(StudentPhotoRepo photoRepository,
-                                        SchoolSubmissionRepositry submissionRepository,
                                         Category_SchoolRepository categoryRepository) {
         this.photoRepository = photoRepository;
-        this.submissionRepository = submissionRepository;
         this.categoryRepository = categoryRepository;
     }
 
@@ -33,16 +30,8 @@ public class Category_SchoolFilterService {
         return photoRepository.findByCategoryId(categoryId);
     }
 
-    public List<SchoolSubmission> getSubmissionsByCategoryId(Long categoryId) {
-        return submissionRepository.findByCategoryId(categoryId);
-    }
-
     public List<StudentPhoto> getPhotosByCategoryName(String categoryName) {
         return photoRepository.findByCategoryName(categoryName);
-    }
-
-    public List<SchoolSubmission> getSubmissionsByCategoryName(String categoryName) {
-        return submissionRepository.findByCategoryName(categoryName);
     }
 
     public List<Category_School> getAllCategories() {

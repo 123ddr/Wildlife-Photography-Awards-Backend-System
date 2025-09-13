@@ -18,15 +18,12 @@ import java.util.List;
 public class Category_OpenFilterService {
 
     private final OpenPhotoRepo photoRepository;
-    private final OpenSubmissionRepository submissionRepository;
     private final Category_OpenRepository categoryRepository;
 
     @Autowired
     public Category_OpenFilterService(OpenPhotoRepo photoRepository,
-                                      OpenSubmissionRepository submissionRepository,
                                       Category_OpenRepository categoryRepository) {
         this.photoRepository = photoRepository;
-        this.submissionRepository = submissionRepository;
         this.categoryRepository = categoryRepository;
     }
 
@@ -34,17 +31,9 @@ public class Category_OpenFilterService {
         return photoRepository.findByCategoryId(categoryId);
     }
 
-//    public List<OpenSubmission> getSubmissionsByCategoryId(Long categoryId) {
-//        return submissionRepository.findByCategoryId(categoryId);
-//    }
-
     public List<OpenPhoto> getPhotosByCategoryName(String categoryName) {
         return photoRepository.findByCategoryName(categoryName);
     }
-
-//    public List<OpenSubmission> getSubmissionsByCategoryName(String categoryName) {
-//        return submissionRepository.findByCategoryName(categoryName);
-//    }
 
     public List<Category_Open> getAllCategories() {
         return categoryRepository.findAll();

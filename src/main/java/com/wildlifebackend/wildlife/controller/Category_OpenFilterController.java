@@ -37,13 +37,6 @@ public class Category_OpenFilterController {
         return ResponseEntity.ok(photos);
     }
 
-    // Get submissions by category ID
-//    @GetMapping("/{categoryId}/submissions")
-//    public ResponseEntity<List<OpenSubmission>> getSubmissionsByCategory(@PathVariable Long categoryId) {
-//        List<OpenSubmission> submissions = filterService.getSubmissionsByCategoryId(categoryId);
-//        return ResponseEntity.ok(submissions);
-//    }
-
     // Alternative endpoints using category name instead of ID
     @GetMapping("/by-name/{categoryName}/photos")
     public ResponseEntity<List<OpenPhoto>> getPhotosByCategoryName(@PathVariable String categoryName) {
@@ -51,10 +44,5 @@ public class Category_OpenFilterController {
         return ResponseEntity.ok(photos);
     }
 
-//    @GetMapping("/by-name/{categoryName}/submissions")
-//    public ResponseEntity<List<OpenSubmission>> getSubmissionsByCategoryName(@PathVariable String categoryName) {
-//        List<OpenSubmission> submissions = filterService.getSubmissionsByCategoryName(categoryName);
-//        return ResponseEntity.ok(submissions);
-//    }
 
 }

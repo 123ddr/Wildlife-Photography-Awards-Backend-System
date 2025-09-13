@@ -36,13 +36,6 @@ public class Category_SchoolFilterController {
         return ResponseEntity.ok(photos);
     }
 
-    // Get school submissions by category ID
-    @GetMapping("/{categoryId}/submissions")
-    public ResponseEntity<List<SchoolSubmission>> getSubmissionsByCategory(@PathVariable Long categoryId) {
-        List<SchoolSubmission> submissions = filterService.getSubmissionsByCategoryId(categoryId);
-        return ResponseEntity.ok(submissions);
-    }
-
     // Alternative endpoints using category name
     @GetMapping("/by-name/{categoryName}/photos")
     public ResponseEntity<List<StudentPhoto>> getPhotosByCategoryName(@PathVariable String categoryName) {
@@ -50,9 +43,4 @@ public class Category_SchoolFilterController {
         return ResponseEntity.ok(photos);
     }
 
-    @GetMapping("/by-name/{categoryName}/submissions")
-    public ResponseEntity<List<SchoolSubmission>> getSubmissionsByCategoryName(@PathVariable String categoryName) {
-        List<SchoolSubmission> submissions = filterService.getSubmissionsByCategoryName(categoryName);
-        return ResponseEntity.ok(submissions);
-    }
 }

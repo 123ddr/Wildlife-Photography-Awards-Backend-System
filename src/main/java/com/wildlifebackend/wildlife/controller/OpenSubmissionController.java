@@ -91,6 +91,40 @@ public class OpenSubmissionController {
         }
     }
 
+    @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> getTotalSubmissions() {
+        try {
+            long total = openSubmissionService.getTotalSubmissions();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "totalSubmissions", total
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "Failed to retrieve submission count"
+            ));
+        }
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> getAllSubmissions() {
+        try {
+            List<OpenSubmission> submissions = openSubmissionService.getAllSubmissions();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", submissions
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "Failed to retrieve submissions"
+            ));
+        }
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<?> getAllowedCategories() {
         try {

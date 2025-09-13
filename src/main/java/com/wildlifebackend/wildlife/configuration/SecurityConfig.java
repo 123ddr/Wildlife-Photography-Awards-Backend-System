@@ -51,28 +51,28 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/**",
                                 "/api/authz/signup_student",
-                                "/api/authz/login_student",
+                                "/api/authz/login_student"
 
-                                "/submissions/create",
-                                "/schoolsubmission/createSchoolSubmission",
-                                "/api/photos/**",
-                                "/api/openphotos/**",
-
-                                "/api/open_submissions",
-                                "/api/schoolsubmission/createSchoolSubmission",
-                                "/auth/forgotpass",
-                                "/api/studentphotosphotos/**",
-                                "/api/judges/**",
-                                "/api/judgings/**",
-                                "/api/school/judges/**",
-                                "/api/school/judgings/**",
-                                "/api/categories_open/**"
+//                                "/submissions/create",
+//                                "/schoolsubmission/createSchoolSubmission",
+//                                "/api/photos/**",
+//                                "/api/openphotos/**",
+//
+//                                "/api/open_submissions",
+//                                "/api/schoolsubmission/createSchoolSubmission",
+//                                "/auth/forgotpass",
+//                                "/api/studentphotosphotos/**",
+//                                "/api/judges/**",
+//                                "/api/judgings/**",
+//                                "/api/school/judges/**",
+//                                "/api/school/judgings/**",
+//                                "/api/categories_open/**"
                                                 ).permitAll()
 
                         // Role-based access control
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/student/**").hasRole("STUDENT")
-                        .requestMatchers("/open/**").hasAnyRole("OPENUSER", "ADMIN", "STUDENT")
+                        .requestMatchers("/open/**").hasAnyRole("OPENUSER", "ADMIN")
 
                         .anyRequest().authenticated()
                 )

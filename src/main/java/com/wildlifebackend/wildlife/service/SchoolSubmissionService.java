@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -79,28 +80,12 @@ public class SchoolSubmissionService {
                 submission.setCategory(category);
             }
 
-//            // Set photographers if provided
-//            if (dto.getPhotographerId() != null && !dto.getPhotographerId().isEmpty()) {
-//                Set<Student> photographers = studentRepository.findAllById(dto.getPhotographerIds())
-//                        .stream()
-//                        .collect(Collectors.toSet());
-//                submission.setPhotographers(photographers);
-//            }
-
             // Save the submission
             SchoolSubmission savedSubmission = schoolSubmissionRepository.save(submission);
 
             // Add submission to photographer's list
             photographer.getSubmissions().add(savedSubmission);
             studentRepository.save(photographer);
-
-//            // Update photographers' relationships
-//            if (savedSubmission.getPhotographers() != null) {
-//                savedSubmission.getPhotographers().forEach(photographer -> {
-//                    photographer.getPhotographedSubmissions().add(savedSubmission);
-//                    studentRepository.save(photographer);
-//                });
-//            }
 
             // Transfer to StudentPhoto table if file exists
             if (filePath != null || dto.getRawFilePath() != null) {
@@ -179,4 +164,15 @@ public class SchoolSubmissionService {
 
         return targetLocation.toString();
     }
+
+    //get total count of submissions
+    public long getTotalSubmissions() {
+        return schoolSubmissionRepository.count();
+    }
+
+    // Get all School Submissions
+    public List<SchoolSubmission> getAllSubmissions() {
+        return schoolSubmissionRepository.findAll();
+    }
+
 }

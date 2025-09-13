@@ -23,10 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -167,4 +166,15 @@ public class OpenSubmissionService {
 
         return targetLocation.toString();
     }
+
+    //get total count of submissions
+    public long getTotalSubmissions() {
+        return openSubmissionRepository.count();
+    }
+
+    // Get all Open Submissions
+    public List<OpenSubmission> getAllSubmissions() {
+        return openSubmissionRepository.findAll();
+    }
+
 }

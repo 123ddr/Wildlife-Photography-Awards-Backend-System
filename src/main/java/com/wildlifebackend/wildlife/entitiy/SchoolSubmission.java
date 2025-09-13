@@ -50,11 +50,10 @@ public class SchoolSubmission {
     @Column(name = "mobile_number", nullable = false)
     private String mobileNumber;
 
-
-
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category_School category;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,8 +63,6 @@ public class SchoolSubmission {
     @NotBlank(message = "Entry category is required")
     @Column(name = "entry_category")
     private String entryCategory;
-
-
 
     @OneToMany(
             mappedBy = "submission",

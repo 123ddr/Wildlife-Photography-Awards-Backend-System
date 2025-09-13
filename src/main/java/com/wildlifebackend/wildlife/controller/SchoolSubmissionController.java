@@ -28,7 +28,7 @@ public class SchoolSubmissionController {
     private final ObjectMapper objectMapper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STUDENT', 'ADMIN')")
     public ResponseEntity<?> createSubmission(
             @RequestPart("data") @Valid String submissionJson,
             @RequestPart(value = "file", required = false) MultipartFile file) {
@@ -51,13 +51,6 @@ public class SchoolSubmissionController {
                         "message", "At least one entry category is required"
                 ));
             }
-
-//            if (dto.getSchoolName() == null || dto.getSchoolName().isBlank()) {
-//                return ResponseEntity.badRequest().body(Map.of(
-//                        "error", "Validation error",
-//                        "message", "School name is required"
-//                ));
-//            }
 
             // Create submission
             SchoolSubmission submission = schoolSubmissionService.createSubmission(dto, file);
@@ -98,19 +91,51 @@ public class SchoolSubmissionController {
         }
     }
 
+    @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> getTotalSubmissions() {
+        try {
+            long total = schoolSubmissionService.getTotalSubmissions();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "totalSubmissions", total
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "Failed to retrieve submission count"
+            ));
+        }
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> getAllSubmissions() {
+        try {
+            List<SchoolSubmission> submissions = schoolSubmissionService.getAllSubmissions();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", submissions
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Internal server error",
+                    "message", "Failed to retrieve submissions"
+            ));
+        }
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<?> getAllowedCategories() {
         try {
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", List.of(
-                            "SCHOOL_LIFE",
-                            "NATURE",
-                            "SPORTS",
-                            "EVENTS",
-                            "ARTS",
-                            "SCIENCE",
-                            "COMMUNITY"
+                            "LANDSCAPE",
+                            "PORTRAIT",
+                            "WILDLIFE",
+                            "STREET",
+                            "MACRO"
                     )
             ));
         } catch (Exception e) {
