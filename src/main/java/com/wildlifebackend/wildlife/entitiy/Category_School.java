@@ -26,4 +26,8 @@ public class Category_School {
     // Default constructor
     public Category_School() {
     }
+
+    public String getCategoryName() {
+        return this.name;
+    }
 }

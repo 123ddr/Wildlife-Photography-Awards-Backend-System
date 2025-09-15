@@ -1,77 +1,79 @@
 package com.wildlifebackend.wildlife.controller;
 
-import com.wildlifebackend.wildlife.dto.response.JudgingUpdateRequest;
-import com.wildlifebackend.wildlife.dto.response.SchoolJudgingRequest;
+import com.wildlifebackend.wildlife.dto.response.*;
 import com.wildlifebackend.wildlife.entitiy.SchoolJudging;
 import com.wildlifebackend.wildlife.service.SchoolJudgingService;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/school/judgings")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/school-judging")
+@RequiredArgsConstructor
 public class SchoolJudgingController {
 
     private final SchoolJudgingService judgingService;
 
-    public SchoolJudgingController(SchoolJudgingService judgingService) {
-        this.judgingService = judgingService;
+    @PostMapping("/select")
+    public ResponseEntity<SchoolJudging> selectPhoto(@RequestBody SchoolPhotoSelectionRequest request) {
+        SchoolJudging result = judgingService.selectPhoto(request);
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping
-    public ResponseEntity<SchoolJudging> createJudging(@RequestBody SchoolJudgingRequest request) {
-        SchoolJudging judging = judgingService.createJudging(
-                request.getJudgeId(),
-                request.getPhotoId(),
-                request.getScore(),
-                request.getFeedback()
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(judging);
+    @GetMapping("/selected/{judgeId}/{categoryId}")
+    public ResponseEntity<List<SchoolJudging>> getSelectedPhotos(
+            @PathVariable Long judgeId,
+            @PathVariable Long categoryId) {
+        List<SchoolJudging> selectedPhotos = judgingService.getSelectedPhotos(judgeId, categoryId);
+        return ResponseEntity.ok(selectedPhotos);
     }
 
-    @GetMapping("/photo/{photoId}")
-    public ResponseEntity<List<SchoolJudging>> getJudgingsByPhotoId(@PathVariable Long photoId) {
-        return ResponseEntity.ok(judgingService.getJudgingsByPhotoId(photoId));
+    @GetMapping("/unmarked/{judgeId}/{categoryId}")
+    public ResponseEntity<List<SchoolJudging>> getUnmarkedPhotos(
+            @PathVariable Long judgeId,
+            @PathVariable Long categoryId) {
+        List<SchoolJudging> unmarkedPhotos = judgingService.getUnmarkedPhotos(judgeId, categoryId);
+        return ResponseEntity.ok(unmarkedPhotos);
     }
 
-    @GetMapping("/judge/{judgeId}")
-    public ResponseEntity<List<SchoolJudging>> getJudgingsByJudgeId(@PathVariable Long judgeId) {
-        return ResponseEntity.ok(judgingService.getJudgingsByJudgeId(judgeId));
+    @PostMapping("/score")
+    public ResponseEntity<SchoolJudging> scorePhoto(@RequestBody SchoolPhotoScoringRequest request) {
+        SchoolJudging result = judgingService.scorePhoto(request);
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/photo/{photoId}/average")
-    public ResponseEntity<Double> getAverageScoreForPhoto(@PathVariable Long photoId) {
-        return judgingService.getAverageScoreForPhoto(photoId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/winners/save")
+    public ResponseEntity<List<SchoolWinnerResponse>> calculateAndSaveWinners() {
+        return ResponseEntity.ok(judgingService.calculateAndSaveWinners());
     }
 
-    @PutMapping("/{judgingId}")
-    public ResponseEntity<SchoolJudging> updateJudging(
-            @PathVariable Long judgingId,
-            @RequestBody JudgingUpdateRequest updateRequest) {
-        try {
-            SchoolJudging updatedJudging = judgingService.updateJudging(
-                    judgingId,
-                    updateRequest.getScore(),
-                    updateRequest.getFeedback()
-            );
-            return ResponseEntity.ok(updatedJudging);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    //winners by category
+
+    @GetMapping("/winners/Wildlife")
+    public ResponseEntity<List<SchoolCategoryWinnerResponse>> getNatureWinners() {
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Wildlife", 5));
     }
 
-    @DeleteMapping("/{judgingId}")
-    public ResponseEntity<Void> deleteJudging(@PathVariable Long judgingId) {
-        try {
-            judgingService.deleteJudging(judgingId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/winners/Landscape")
+    public ResponseEntity<List<SchoolCategoryWinnerResponse>> getPortraitWinners() {
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Landscape", 5));
     }
+
+    @GetMapping("/winners/Birds")
+    public ResponseEntity<List<SchoolCategoryWinnerResponse>> getWildlifeWinners() {
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Birds", 5));
+    }
+
+    @GetMapping("/winners/Macro")
+    public ResponseEntity<List<SchoolCategoryWinnerResponse>> getLandscapeWinners() {
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Macro", 5));
+    }
+
+    @GetMapping("/winners/Conservation")
+    public ResponseEntity<List<SchoolCategoryWinnerResponse>> getUrbanWinners() {
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Conservation", 5));
+    }
+
 }

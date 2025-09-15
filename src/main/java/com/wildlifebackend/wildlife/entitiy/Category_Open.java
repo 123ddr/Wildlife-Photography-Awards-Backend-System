@@ -30,4 +30,8 @@ public class Category_Open {
     public Category_Open() {
 
     }
+
+    public String getCategoryName() {
+        return this.name;
+    }
 }
