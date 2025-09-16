@@ -24,11 +24,11 @@ public class Category_Schoolnitializer {
     public void initCategories() {
         if (categoryRepository.count() == 0) {
             List<Category_School> defaultCategories = Arrays.asList(
-                    new Category_School("LANDSCAPE"),
-                    new Category_School("PORTRAIT"),
-                    new Category_School("WILDLIFE"),
-                    new Category_School("STREET"),
-                    new Category_School("MACRO")
+                    new Category_School("Animal Behaviours"),
+                    new Category_School("Animal Portraits"),
+                    new Category_School("Natural Habitats"),
+                    new Category_School("Urban Wildlife"),
+                    new Category_School("Wild Flora")
             );
             categoryRepository.saveAll(defaultCategories);
             log.info("Initialized 5 default categories");

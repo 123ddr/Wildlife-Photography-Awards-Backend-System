@@ -131,11 +131,11 @@ public class OpenSubmissionController {
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", List.of(
-                            "LANDSCAPE",
-                            "PORTRAIT",
-                            "WILDLIFE",
-                            "STREET",
-                            "MACRO"
+                            "Animal Behaviours",
+                            "Animal Portraits",
+                            "Natural Habitats",
+                            "Urban Wildlife",
+                            "Wild Flora"
                     )
             ));
         } catch (Exception e) {

@@ -31,8 +31,6 @@ public class OpenUserController {
         this.jwtConfig = jwtConfig;
     }
 
-
-
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<String>> signUp(@Valid @RequestBody OpenUser openuser) {
         try {
@@ -42,7 +40,6 @@ public class OpenUserController {
             return ResponseEntity.ok(APIResponse.error(e.getMessage()));
         }
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestParam String email, @RequestParam String password) {

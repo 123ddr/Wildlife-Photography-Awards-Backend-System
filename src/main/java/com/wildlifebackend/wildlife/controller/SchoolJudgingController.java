@@ -51,29 +51,29 @@ public class SchoolJudgingController {
 
     //winners by category
 
-    @GetMapping("/winners/Wildlife")
+    @GetMapping("/winners/Animal Behaviours")
     public ResponseEntity<List<SchoolCategoryWinnerResponse>> getNatureWinners() {
-        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Wildlife", 5));
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("ANIMAL BEHAVIOURS", 5));
     }
 
-    @GetMapping("/winners/Landscape")
+    @GetMapping("/winners/Animal Portraits")
     public ResponseEntity<List<SchoolCategoryWinnerResponse>> getPortraitWinners() {
-        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Landscape", 5));
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("ANIMAL PORTRAITS", 5));
     }
 
-    @GetMapping("/winners/Birds")
+    @GetMapping("/winners/Natural Habitats")
     public ResponseEntity<List<SchoolCategoryWinnerResponse>> getWildlifeWinners() {
-        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Birds", 5));
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("NATURAL HABITATS", 5));
     }
 
-    @GetMapping("/winners/Macro")
+    @GetMapping("/winners/Urban Wildlife")
     public ResponseEntity<List<SchoolCategoryWinnerResponse>> getLandscapeWinners() {
-        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Macro", 5));
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("URBAN WILDLIFE", 5));
     }
 
-    @GetMapping("/winners/Conservation")
+    @GetMapping("/winners/Wild Flora")
     public ResponseEntity<List<SchoolCategoryWinnerResponse>> getUrbanWinners() {
-        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("Conservation", 5));
+        return ResponseEntity.ok(judgingService.getTopWinnersByCategory("WILD FLORA", 5));
     }
 
 }

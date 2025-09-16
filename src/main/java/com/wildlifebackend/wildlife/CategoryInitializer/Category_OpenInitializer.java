@@ -23,11 +23,11 @@ public class Category_OpenInitializer {
     public void initCategories() {
         if (categoryRepository.count() == 0) {
             List<Category_Open> defaultCategories = Arrays.asList(
-                    new Category_Open("LANDSCAPE"),
-                    new Category_Open("PORTRAIT"),
-                    new Category_Open("WILDLIFE"),
-                    new Category_Open("STREET"),
-                    new Category_Open("MACRO")
+                    new Category_Open("Animal Behaviours"),
+                    new Category_Open("Animal Portraits"),
+                    new Category_Open("Natural Habitats"),
+                    new Category_Open("Urban Wildlife"),
+                    new Category_Open("Wild Flora")
             );
             categoryRepository.saveAll(defaultCategories);
             log.info("Initialized 5 default categories");

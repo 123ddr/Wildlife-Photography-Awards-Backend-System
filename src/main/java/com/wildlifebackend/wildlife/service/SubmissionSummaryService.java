@@ -23,7 +23,10 @@ public class SubmissionSummaryService {
         return openCount + schoolCount;
     }
 
-    private static final List<String> CATEGORIES = List.of("LANDSCAPE", "PORTRAIT", "WILDLIFE", "STREET", "MACRO");
+    private static final List<String> CATEGORIES = List.of("ANIMAL BEHAVIOURS",
+            "ANIMAL PORTRAITS",
+            "NATURAL HABITATS",
+            "URBAN WILDLIFE", "WILD FLORA");
 
     // Open categories
     public Map<String, Long> getOpenCategoryTotals() {

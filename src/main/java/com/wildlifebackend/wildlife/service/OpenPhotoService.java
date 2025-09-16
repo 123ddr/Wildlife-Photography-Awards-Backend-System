@@ -6,7 +6,6 @@ import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
 import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.repository.OpenPhotoRepo;
 import com.wildlifebackend.wildlife.repository.OpenSubmissionRepository;
-import com.wildlifebackend.wildlife.repository.OpenUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ public class OpenPhotoService {
 
     private final OpenPhotoRepo openPhotoRepository;
     private final OpenSubmissionRepository openSubmissionRepository;
-    private final OpenUserRepository openUserRepository;
 
     @Transactional
     public OpenPhoto createPhotoFromSubmission(Long submissionId) throws IOException {
