@@ -1,7 +1,6 @@
 package com.wildlifebackend.wildlife.controller;
 
 import com.wildlifebackend.wildlife.entitiy.Category_School;
-import com.wildlifebackend.wildlife.entitiy.SchoolSubmission;
 import com.wildlifebackend.wildlife.entitiy.StudentPhoto;
 import com.wildlifebackend.wildlife.service.Category_SchoolFilterService;
 import org.springframework.beans.factory.annotation.Autowired;

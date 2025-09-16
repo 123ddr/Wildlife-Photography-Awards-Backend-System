@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OpenWinnersRepo extends JpaRepository<OpenWinners, Long> {
-    void deleteAllByCategoryName(String categoryName); // Optional: clear old winners per category
 }

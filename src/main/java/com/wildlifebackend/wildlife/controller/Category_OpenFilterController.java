@@ -3,7 +3,6 @@ package com.wildlifebackend.wildlife.controller;
 
 import com.wildlifebackend.wildlife.entitiy.Category_Open;
 import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
-import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.service.Category_OpenFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

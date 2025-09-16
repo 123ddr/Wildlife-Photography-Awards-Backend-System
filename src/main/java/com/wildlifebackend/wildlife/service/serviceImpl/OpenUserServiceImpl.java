@@ -84,10 +84,4 @@ public class OpenUserServiceImpl implements OpenUserService {
         return openuser;
     }
 
-
-    public OpenUser getAuthenticatedUser(org.apache.tomcat.util.net.openssl.ciphers.Authentication authentication) {
-        return null;
-    }
-
-
 }

@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +34,8 @@ public class SchoolSubmissionService {
     private final StudentRepositary studentRepository;
     private final Category_SchoolRepository categoryRepository;
     private final StudentPhotoService studentPhotoService;
+    private final CertificateService certificateService;
+    private final EmailService emailService;
     private final Path uploadDir = Paths.get("school-uploads").toAbsolutePath().normalize();
 
     @PostConstruct
@@ -90,6 +93,24 @@ public class SchoolSubmissionService {
             // Transfer to StudentPhoto table if file exists
             if (filePath != null || dto.getRawFilePath() != null) {
                 studentPhotoService.createPhotoFromSubmission(savedSubmission.getId());
+            }
+
+            // ---- Generate certificate and send email ----
+            try {
+                File cert = certificateService.generateCertificate(savedSubmission);
+
+                String htmlBody = "<p>Dear " + savedSubmission.getPhotographer().getName() + ",</p>" +
+                        "<p>Thank you for your submission \"" + savedSubmission.getEntryTitle() + "\".</p>" +
+                        "<p>Please find your participation certificate attached.</p>" +
+                        "<p>Best regards,<br/>Organizers</p>";
+
+                emailService.sendCertificateEmail(savedSubmission.getEmail(),
+                        "Your Wildlife Photography Submission Certificate",
+                        htmlBody,
+                        cert);
+            } catch (Exception ex) {
+                // Log the error (use your logging framework); do not throw unless you want to rollback the DB save.
+                System.err.println("Failed to generate/send certificate: " + ex.getMessage());
             }
 
             return savedSubmission;

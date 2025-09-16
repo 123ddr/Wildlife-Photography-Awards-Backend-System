@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OpenSubmissionRepository extends JpaRepository<OpenSubmission, Long> {
-
     long countByEntryCategory(String entryCategory);
 }

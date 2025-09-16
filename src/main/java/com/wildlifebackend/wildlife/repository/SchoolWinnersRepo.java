@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SchoolWinnersRepo extends JpaRepository<SchoolWinners, Long> {
-    void deleteAllByCategoryName(String categoryName); // Optional: clear old winners per category
 }

@@ -3,10 +3,8 @@ package com.wildlifebackend.wildlife.service;
 
 import com.wildlifebackend.wildlife.entitiy.Category_Open;
 import com.wildlifebackend.wildlife.entitiy.OpenPhoto;
-import com.wildlifebackend.wildlife.entitiy.OpenSubmission;
 import com.wildlifebackend.wildlife.repository.Category_OpenRepository;
 import com.wildlifebackend.wildlife.repository.OpenPhotoRepo;
-import com.wildlifebackend.wildlife.repository.OpenSubmissionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -48,11 +48,6 @@ public class StudentPhotoService {
             }
         }
 
-//        // Set relationships
-//        photo.setStudent(submission.getStudent());
-//        photo.setCategory(submission.getCategory());
-//        photo.setSubmission(submission);
-
         // Set relationships - now using single photographer instead of set
         if (submission.getPhotographer() != null) {
             photo.setStudent(submission.getPhotographer());
@@ -64,5 +59,4 @@ public class StudentPhotoService {
         return studentPhotoRepository.save(photo);
     }
 
-    // Additional methods for school context could be added here
 }

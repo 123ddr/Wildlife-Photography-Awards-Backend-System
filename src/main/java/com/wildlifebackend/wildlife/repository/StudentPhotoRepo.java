@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StudentPhotoRepo extends JpaRepository<StudentPhoto,Long> {
-    List<StudentPhoto> findByStudentId(Long studentId);
 
     // Find photos by category
     @Query("SELECT p FROM StudentPhoto p WHERE p.category.categoryId = :categoryId")

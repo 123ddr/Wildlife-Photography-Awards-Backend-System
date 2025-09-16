@@ -43,9 +43,4 @@ public class StudentSubmissionDTO {
     @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Mobile number should be valid (10-15 digits with optional + prefix)")
     private String mobileNumber;
 
-
-    public String getFormattedPhotographerId() {
-        return String.format("Student_ID_%04d", photographerId);
-    }
-
 }

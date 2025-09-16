@@ -85,8 +85,4 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
-    //connect the StudentPhotoController class
-    public Student getAuthenticatedStudent(Authentication authentication) {
-        return null;
-    }
 }

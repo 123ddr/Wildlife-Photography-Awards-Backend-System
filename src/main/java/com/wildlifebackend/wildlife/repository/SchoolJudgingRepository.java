@@ -19,10 +19,6 @@ public interface SchoolJudgingRepository extends JpaRepository<SchoolJudging, Lo
     Optional<SchoolJudging> findByJudgeJudgeIdAndPhotoIdAndCategoryCategoryId(
             Long judgeId, Long photoId, Long categoryId);
 
-    List<SchoolJudging> findByJudgeJudgeIdAndCategoryCategoryIdAndIsMarkedFalse(Long judgeId, Long categoryId);
-
-    boolean existsByJudgeJudgeIdAndPhotoIdAndCategoryCategoryId(Long judgeId, Long photoId, Long categoryId);
-
     @Query("SELECT sj FROM SchoolJudging sj WHERE sj.judge.judgeId = :judgeId AND sj.category.categoryId = :categoryId AND sj.isSelected = true AND sj.isMarked = false")
     List<SchoolJudging> findUnmarkedSelectedPhotos(@Param("judgeId") Long judgeId, @Param("categoryId") Long categoryId);
 

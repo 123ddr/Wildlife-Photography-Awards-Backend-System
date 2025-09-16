@@ -5,7 +5,6 @@ package com.wildlifebackend.wildlife.controller;
 import com.wildlifebackend.wildlife.configuration.JwtConfig;
 import com.wildlifebackend.wildlife.dto.response.APIResponse;
 import com.wildlifebackend.wildlife.entitiy.OpenUser;
-import com.wildlifebackend.wildlife.service.OpenUserService;
 import com.wildlifebackend.wildlife.dto.response.TokenResponse;
 import com.wildlifebackend.wildlife.service.serviceImpl.OpenUserServiceImpl;
 import io.jsonwebtoken.Jwts;

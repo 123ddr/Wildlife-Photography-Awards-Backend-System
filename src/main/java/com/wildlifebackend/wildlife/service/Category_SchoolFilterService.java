@@ -1,10 +1,8 @@
 package com.wildlifebackend.wildlife.service;
 
 import com.wildlifebackend.wildlife.entitiy.Category_School;
-import com.wildlifebackend.wildlife.entitiy.SchoolSubmission;
 import com.wildlifebackend.wildlife.entitiy.StudentPhoto;
 import com.wildlifebackend.wildlife.repository.Category_SchoolRepository;
-import com.wildlifebackend.wildlife.repository.SchoolSubmissionRepositry;
 import com.wildlifebackend.wildlife.repository.StudentPhotoRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

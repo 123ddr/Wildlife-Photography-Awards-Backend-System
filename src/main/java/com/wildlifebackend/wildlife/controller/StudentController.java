@@ -19,7 +19,6 @@ import java.util.Date;
 @RequestMapping("api/authz")
 public class StudentController {
 
-
     private final StudentServiceImpl studentService;
     private final JwtConfig jwtConfig;
 
@@ -28,8 +27,6 @@ public class StudentController {
         this.studentService = studentService;
         this.jwtConfig = jwtConfig;
     }
-
-
 
     @PostMapping("/signup_student")
     public ResponseEntity<APIResponse<String>> signUp(@Valid @RequestBody Student student) {

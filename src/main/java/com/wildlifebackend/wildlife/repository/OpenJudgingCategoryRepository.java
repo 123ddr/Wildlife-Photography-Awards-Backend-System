@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OpenJudgingCategoryRepository extends JpaRepository<OpenJudgingCategory, Long> {
-    OpenJudgingCategory findByCategoryName(String categoryName);
 }

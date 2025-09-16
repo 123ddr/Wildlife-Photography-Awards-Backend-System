@@ -66,4 +66,5 @@ public class OpenJudging {
     public OpenPhoto getPhoto() {
         return this.photo;
     }
+
 }

@@ -21,7 +21,6 @@ public class Category_Open {
     @Column(nullable = false, unique = true)
     private String name;
 
-
     // Constructor with name parameter
     public Category_Open(String name) {
         this.name = name;

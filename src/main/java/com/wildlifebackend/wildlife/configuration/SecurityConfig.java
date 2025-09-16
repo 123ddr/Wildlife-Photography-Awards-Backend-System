@@ -43,9 +43,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
 
-//        To ensure CSRF is completely disabled for API requests, explicitly exclude it for all endpoints:
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST,
@@ -53,20 +50,6 @@ public class SecurityConfig {
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student"
 
-//                                "/submissions/create",
-//                                "/schoolsubmission/createSchoolSubmission",
-//                                "/api/photos/**",
-//                                "/api/openphotos/**",
-//
-//                                "/api/open_submissions",
-//                                "/api/schoolsubmission/createSchoolSubmission",
-//                                "/auth/forgotpass",
-//                                "/api/studentphotosphotos/**",
-//                                "/api/judges/**",
-//                                "/api/judgings/**",
-//                                "/api/school/judges/**",
-//                                "/api/school/judgings/**",
-//                                "/api/categories_open/**"
                                                 ).permitAll()
 
                         // Role-based access control

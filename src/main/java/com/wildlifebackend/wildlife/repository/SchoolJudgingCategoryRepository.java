@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SchoolJudgingCategoryRepository extends JpaRepository<SchoolJudgingCategory, Long> {
-    SchoolJudgingCategory findByCategoryName(String categoryName);
 }

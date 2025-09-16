@@ -1,7 +1,6 @@
 package com.wildlifebackend.wildlife.entitiy;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 @MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class BaseEntity {
     @Version
     private Long version;

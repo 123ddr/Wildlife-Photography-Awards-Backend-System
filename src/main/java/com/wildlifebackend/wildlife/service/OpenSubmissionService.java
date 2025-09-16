@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +37,8 @@ public class OpenSubmissionService {
     private final OpenUserRepository openUserRepository;
     private final Category_OpenRepository categoryRepository;
     private final OpenPhotoService openPhotoService;
+    private final CertificateService certificateService;
+    private final EmailService emailService;
     private final Path uploadDir = Paths.get("uploads").toAbsolutePath().normalize();
 
     @PostConstruct
@@ -48,18 +51,15 @@ public class OpenSubmissionService {
         try {
             validateSubmission(dto);
 
-            // Handle file upload
             String filePath = null;
             if (file != null && !file.isEmpty()) {
                 filePath = uploadFile(file);
             }
 
-            // Get the photographer
             OpenUser photographer = openUserRepository.findById(dto.getPhotographerId())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.BAD_REQUEST, "Photographer not found"));
 
-            // Create submission
             OpenSubmission submission = new OpenSubmission();
             submission.setEntryTitle(dto.getEntryTitle());
             submission.setDateOfPhotograph(dto.getDateOfPhotograph());
@@ -70,11 +70,9 @@ public class OpenSubmissionService {
             submission.setMobileNumber(dto.getMobileNumber());
             submission.setEntryCategory(dto.getEntryCategory());
 
-            // Set both the photographer relationship and formatted ID
             submission.setPhotographer(photographer);
             submission.setPhotographerId(String.format("OpenUser_ID_%04d", photographer.getId()));
 
-            // Handle category relationship
             if (dto.getCategoryId() != null) {
                 Category_Open category = categoryRepository.findById(dto.getCategoryId())
                         .orElseThrow(() -> new ResponseStatusException(
@@ -82,16 +80,32 @@ public class OpenSubmissionService {
                 submission.setCategory(category);
             }
 
-            // Save the submission
             OpenSubmission savedSubmission = openSubmissionRepository.save(submission);
 
-            // Add submission to photographer's list
+            // Add submission to photographer entity (if you track it)
             photographer.getSubmissions().add(savedSubmission);
             openUserRepository.save(photographer);
 
-            // Transfer to OpenPhoto table if file exists
             if (filePath != null || dto.getRawFilePath() != null) {
                 openPhotoService.createPhotoFromSubmission(savedSubmission.getId());
+            }
+
+            // ---- Generate certificate and send email ----
+            try {
+                File cert = certificateService.generateCertificate(savedSubmission);
+
+                String htmlBody = "<p>Dear " + savedSubmission.getPhotographer().getName() + ",</p>" +
+                        "<p>Thank you for your submission \"" + savedSubmission.getEntryTitle() + "\".</p>" +
+                        "<p>Please find your participation certificate attached.</p>" +
+                        "<p>Best regards,<br/>Organizers</p>";
+
+                emailService.sendCertificateEmail(savedSubmission.getEmail(),
+                        "Your Wildlife Photography Submission Certificate",
+                        htmlBody,
+                        cert);
+            } catch (Exception ex) {
+                // Log the error (use your logging framework); do not throw unless you want to rollback the DB save.
+                System.err.println("Failed to generate/send certificate: " + ex.getMessage());
             }
 
             return savedSubmission;
