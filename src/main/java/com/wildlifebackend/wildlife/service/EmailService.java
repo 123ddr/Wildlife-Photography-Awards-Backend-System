@@ -4,7 +4,6 @@ package com.wildlifebackend.wildlife.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,9 +17,6 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}") // your_email@gmail.com  -> username of SMTP
-    private String fromAddress;
-
     public void sendEmail(String to,String subject, String htmlContent){
 
         try {
@@ -29,7 +25,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true = HTML content
-            helper.setFrom("your_email@gmail.com"); // Replace with your SMTP email
+            helper.setFrom("dumindudananjaya123@gmail.com"); // Replace with your SMTP email
             mailSender.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send email", e);
@@ -44,7 +40,7 @@ public class EmailService {
 
             helper.setTo(to);
             helper.setSubject("Welcome to the National Wildlife Photography Award 2025 – Your Photographer ID");
-            helper.setFrom("your_email@gmail.com"); // Replace with your email configured in SMTP
+            helper.setFrom("dumindudananjaya123@gmail.com"); // Replace with your email configured in SMTP
 
             String emailContent = """
                 <p>Dear <strong>%s</strong>,</p>
@@ -82,7 +78,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(fromAddress);
+            helper.setFrom("dumindudananjaya123@gmail.com");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);

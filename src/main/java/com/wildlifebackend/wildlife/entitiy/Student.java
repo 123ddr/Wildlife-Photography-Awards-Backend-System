@@ -60,8 +60,8 @@ public class Student extends BaseEntity {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @Transient
     @NotBlank(message = "Confirm password is required")
+    @Transient
     private String confirmPassword;
 
     @OneToMany(mappedBy = "photographer", cascade = CascadeType.ALL, orphanRemoval = true)

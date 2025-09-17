@@ -34,9 +34,9 @@ public class PasswordController {
 
     @PostMapping("/forgotpass")
     public ResponseEntity<String> forgotPass(@RequestParam String email) {
+
         Optional<Student> student = studentRepositary.findBySchoolEmail(email);
         Optional<OpenUser> openUser = openUserRepository.findByEmail(email);
-
 
         if (student.isPresent()) {
             return resetPassword(student.get(), student.get().getSchoolEmail());
@@ -47,30 +47,35 @@ public class PasswordController {
         return ResponseEntity.badRequest().body("Email not found");
     }
 
-private ResponseEntity<String> resetPassword(Object user, String email){
-    String newPassword = PasswordGenerater.generatePassword(8);
-    String hashedPassword = passwordEncoder.encode(newPassword);
+    private ResponseEntity<String> resetPassword(Object user, String email) {
+        // Generate new password
+        String newPassword = PasswordGenerater.generatePassword(8);
+        String hashedPassword = passwordEncoder.encode(newPassword);
 
-    if (user instanceof Student) {
-        ((Student) user).setPassword(hashedPassword);
-        studentRepositary.save((Student) user);
-    } else if (user instanceof OpenUser) {
-        ((OpenUser) user).setPassword(hashedPassword);
-        openUserRepository.save((OpenUser) user);
+        if (user instanceof Student) {
+            Student student = (Student) user;
+            student.setPassword(hashedPassword);
+            student.setConfirmPassword(""); // avoid validation error
+            studentRepositary.save(student);
+        } else if (user instanceof OpenUser) {
+            OpenUser openUser = (OpenUser) user;
+            openUser.setPassword(hashedPassword);
+            openUser.setConfirmPassword(""); // avoid validation error
+            openUserRepository.save(openUser);
+        }
+
+        // HTML email content
+        String emailContent = """
+            <p>Dear user,</p>
+            <p>Your password has been reset successfully. Your new password is:</p>
+            <h3 style="color: blue;">%s</h3>
+            <p>Please log in and change your password immediately for security reasons.</p>
+            <p>Best regards,<br><em>Wildlife</em></p>
+            """.formatted(newPassword);
+
+        emailService.sendEmail(email, "Password Reset", emailContent);
+
+        return ResponseEntity.ok("New password has been sent to your email.");
     }
-
-    // HTML email content
-    String emailContent = """
-                <p>Dear user,</p>
-                <p>Your password has been reset successfully. Your new password is:</p>
-                <h3 style="color: blue;">%s</h3>
-                <p>Please log in and change your password immediately for security reasons.</p>
-                <p>Best regards,<br><em>Wildlife</em></p>
-                """.formatted(newPassword);
-
-    emailService.sendEmail(email, "Password Reset", emailContent);
-
-    return ResponseEntity.ok("New password has been sent to your email.");
-}
 
 }

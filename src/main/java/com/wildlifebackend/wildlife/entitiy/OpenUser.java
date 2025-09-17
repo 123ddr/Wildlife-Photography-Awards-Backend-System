@@ -3,6 +3,7 @@ package com.wildlifebackend.wildlife.entitiy;
 
 import com.wildlifebackend.wildlife.enums.UserRole;
 import jakarta.persistence.*;
+import jakarta.servlet.Registration;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,8 +46,8 @@ public class OpenUser extends BaseEntity {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @NotBlank(message = "Confirm password is required", groups = Registration.class)
     @Transient
-    @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
     @Column
