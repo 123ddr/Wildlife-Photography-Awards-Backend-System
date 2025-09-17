@@ -31,11 +31,13 @@ public class SecurityConfig {
     private final OpenUserDetailsService openUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final StudentDetailsService studentDetailsService;
+    private final AdminDetailsService adminDetailsService;
 
-    public SecurityConfig(OpenUserDetailsService openUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, StudentDetailsService studentDetailsService) {
+    public SecurityConfig(OpenUserDetailsService openUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, StudentDetailsService studentDetailsService, AdminDetailsService adminDetailsService) {
         this.openUserDetailsService = openUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.studentDetailsService = studentDetailsService;
+        this.adminDetailsService = adminDetailsService;
     }
 
     @Bean
@@ -48,7 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/**",
                                 "/api/authz/signup_student",
-                                "/api/authz/login_student"
+                                "/api/authz/login_student",
+                                "/api/admin/signup",
+                                "/api/admin/login"
 
                                                 ).permitAll()
 
@@ -77,11 +81,18 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(openAuthProvider())
-                .authenticationProvider(studentAuthProvider() )
+                .authenticationProvider(studentAuthProvider())
+                .authenticationProvider(adminAuthProvider())
                 .build();
     }
 
-
+    @Bean
+    public DaoAuthenticationProvider adminAuthProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(adminDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
 
     @Bean
     public DaoAuthenticationProvider openAuthProvider() {
