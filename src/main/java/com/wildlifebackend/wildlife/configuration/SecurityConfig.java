@@ -32,12 +32,14 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final StudentDetailsService studentDetailsService;
     private final AdminDetailsService adminDetailsService;
+    private final JudgeDetailsService  judgeDetailsService;
 
-    public SecurityConfig(OpenUserDetailsService openUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, StudentDetailsService studentDetailsService, AdminDetailsService adminDetailsService) {
+    public SecurityConfig(OpenUserDetailsService openUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, StudentDetailsService studentDetailsService, AdminDetailsService adminDetailsService, JudgeDetailsService judgeDetailsService) {
         this.openUserDetailsService = openUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.studentDetailsService = studentDetailsService;
         this.adminDetailsService = adminDetailsService;
+        this.judgeDetailsService = judgeDetailsService;
     }
 
     @Bean
@@ -52,7 +54,9 @@ public class SecurityConfig {
                                 "/api/authz/signup_student",
                                 "/api/authz/login_student",
                                 "/api/admin/signup",
-                                "/api/admin/login"
+                                "/api/admin/login",
+                                "/api/judges/signup",
+                                "/api/judges/login"
 
                                                 ).permitAll()
 
@@ -83,6 +87,7 @@ public class SecurityConfig {
                 .authenticationProvider(openAuthProvider())
                 .authenticationProvider(studentAuthProvider())
                 .authenticationProvider(adminAuthProvider())
+                .authenticationProvider(judgeAuthProvider())
                 .build();
     }
 
@@ -90,6 +95,14 @@ public class SecurityConfig {
     public DaoAuthenticationProvider adminAuthProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(adminDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider judgeAuthProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(judgeDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
