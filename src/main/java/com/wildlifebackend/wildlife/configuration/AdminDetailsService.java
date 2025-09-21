@@ -2,9 +2,7 @@ package com.wildlifebackend.wildlife.configuration;
 
 
 import com.wildlifebackend.wildlife.entitiy.Admin;
-import com.wildlifebackend.wildlife.entitiy.OpenUser;
 import com.wildlifebackend.wildlife.repository.AdminRepository;
-import com.wildlifebackend.wildlife.repository.OpenUserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -5,7 +5,6 @@ import com.wildlifebackend.wildlife.configuration.JwtConfig;
 import com.wildlifebackend.wildlife.dto.response.APIResponse;
 import com.wildlifebackend.wildlife.dto.response.TokenResponse;
 import com.wildlifebackend.wildlife.entitiy.Admin;
-import com.wildlifebackend.wildlife.service.AdminService;
 import com.wildlifebackend.wildlife.service.AdminServiceImpl;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;

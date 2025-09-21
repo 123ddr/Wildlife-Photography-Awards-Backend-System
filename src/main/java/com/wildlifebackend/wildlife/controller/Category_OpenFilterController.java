@@ -43,5 +43,4 @@ public class Category_OpenFilterController {
         return ResponseEntity.ok(photos);
     }
 
-
 }

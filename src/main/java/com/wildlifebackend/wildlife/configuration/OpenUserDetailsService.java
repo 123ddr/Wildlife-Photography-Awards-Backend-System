@@ -30,5 +30,4 @@ public class OpenUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-
 }

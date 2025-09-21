@@ -38,7 +38,6 @@ public class StudentController {
         }
     }
 
-
     @PostMapping("/login_student")
     public ResponseEntity<TokenResponse> loginStudent(@RequestParam String schoolEmail, @RequestParam String password) {
         try {
